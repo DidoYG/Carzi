@@ -20,3 +20,16 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.navbar .btn-link:focus,
+.navbar .btn-link:active,
+.navbar .btn-link:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.navbar-nav .nav-link {
+    display: flex;
+    align-items: center;
+}
+

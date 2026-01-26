@@ -8,6 +8,7 @@ namespace Carzi.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options) { }
 
+        // DbSets for each model
         public DbSet<User> Users { get; set; }
         public DbSet<Car> Cars { get; set; }
         public DbSet<Fuel> Fuels { get; set; }

@@ -17,7 +17,7 @@ namespace Carzi.Controllers
             _context = context;
         }
 
-        // LOGIC SCREEN
+        // Logic for displaying login page
         [HttpGet]
         public IActionResult Index()
         {
@@ -36,7 +36,7 @@ namespace Carzi.Controllers
             return View("Index");
         }
 
-        // LOGIN
+        // Login method POST
         [HttpPost]
         public async Task<IActionResult> Login(string username, string password)
         {
@@ -52,7 +52,7 @@ namespace Carzi.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        // REGISTER
+        // Register method POST
         [HttpPost]
         public async Task<IActionResult> Register(string username, string email, string password)
         {
@@ -77,7 +77,7 @@ namespace Carzi.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        // CONTINUE AS GUEST
+        // Continue as Guest POST
         [HttpPost]
         public async Task<IActionResult> Guest()
         {
@@ -92,7 +92,7 @@ namespace Carzi.Controllers
             return RedirectToAction("Index");
         }
 
-        // SHARED SIGN-IN LOGIC
+        // Shared logic to sign in user
         private async Task SignInUser(int id, string username, string role, bool isPersistent)
         {
             var claims = new List<Claim>

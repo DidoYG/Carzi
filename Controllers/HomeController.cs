@@ -15,12 +15,27 @@ public class HomeController : Controller
         _logger = logger;
     }
 
-    public IActionResult Index(string tab = "vehicles")
-    {
-        ViewBag.ActiveTab = tab.ToLower();
+    [Authorize]
+    public IActionResult Index(string? tab)
+    {   
+        // Set menu tabs based on user role
+        if (User.IsInRole("Guest"))
+        {
+            ViewBag.ActiveTab = "tripcalc";
+        }
+        else if (User.IsInRole("Admin"))
+        {
+            ViewBag.ActiveTab = tab ?? "users";
+        }
+        else // Registered user
+        {
+            ViewBag.ActiveTab = tab ?? "dashboard";
+        }
+
         return View();
     }
 
+    // Privacy Policy
     public IActionResult Privacy()
     {
         return View();

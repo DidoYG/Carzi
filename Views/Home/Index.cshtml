@@ -4,8 +4,9 @@
 }
 
 @{
-var isUserRole = User.IsInRole("User");
-var isAdminOrGuest = User.IsInRole("Admin") || User.IsInRole("Guest");
+    var isUserRole = User.IsInRole("User");
+    var isAdminRole = User.IsInRole("Admin");
+    var isGuestRole = User.IsInRole("Guest");
 }
 
 <style>
@@ -49,40 +50,81 @@ var isAdminOrGuest = User.IsInRole("Admin") || User.IsInRole("Guest");
 
 <div class="home-container">
 
-    <!-- Welcome -->
+    <!-- Welcome Title -->
     <div class="welcome">
         Welcome, <strong>@username</strong>
     </div>
 
     @if (isUserRole)
     {
-        <!-- Tabs for User role only -->
+        <!-- Register User menu tabs -->
         <div class="tabs">
+            <a asp-controller="Home" asp-action="Index" asp-route-tab="dashboard"
+            class="@(ViewBag.ActiveTab == "dashboard" ? "active" : "")">
+                Dashboard
+            </a>
+
             <a asp-controller="Home" asp-action="Index" asp-route-tab="vehicles"
-               class="@(ViewBag.ActiveTab == "vehicles" ? "active" : "")">
+            class="@(ViewBag.ActiveTab == "vehicles" ? "active" : "")">
                 Vehicles
             </a>
 
             <a asp-controller="Home" asp-action="Index" asp-route-tab="expenses"
-               class="@(ViewBag.ActiveTab == "expenses" ? "active" : "")">
+            class="@(ViewBag.ActiveTab == "expenses" ? "active" : "")">
                 Expenses
             </a>
 
             <a asp-controller="Home" asp-action="Index" asp-route-tab="trips"
-               class="@(ViewBag.ActiveTab == "trips" ? "active" : "")">
+            class="@(ViewBag.ActiveTab == "trips" ? "active" : "")">
                 Trips
             </a>
         </div>
 
-        <!-- Content Panel -->
         <div class="content-panel">
-            @await Html.PartialAsync($"_Home{ViewBag.ActiveTab}")
+            @await Html.PartialAsync($"_User{ViewBag.ActiveTab}")
         </div>
     }
-    else if (isAdminOrGuest)
+    else if (isAdminRole)
     {
+        <!-- Admin menu tabs -->
+        <div class="tabs">
+            <a asp-controller="Home" asp-action="Index" asp-route-tab="users"
+            class="@(ViewBag.ActiveTab == "users" ? "active" : "")">
+                Users
+            </a>
+
+            <a asp-controller="Home" asp-action="Index" asp-route-tab="vignettes"
+            class="@(ViewBag.ActiveTab == "vignettes" ? "active" : "")">
+                Vignettes
+            </a>
+
+            <a asp-controller="Home" asp-action="Index" asp-route-tab="fuels"
+            class="@(ViewBag.ActiveTab == "fuels" ? "active" : "")">
+                Fuels
+            </a>
+
+            <a asp-controller="Home" asp-action="Index" asp-route-tab="inspections"
+            class="@(ViewBag.ActiveTab == "inspections" ? "active" : "")">
+                Annual Inspections
+            </a>
+        </div>
+
         <div class="content-panel">
-            <p>Welcome, <strong>@username</strong>! You have limited access.</p>
+            @await Html.PartialAsync($"_Admin{ViewBag.ActiveTab}")
+        </div>
+    }
+    else if (isGuestRole)
+    {
+        <!-- Guest menu tabs -->
+        <div class="tabs">
+            <a asp-controller="Home" asp-action="Index" asp-route-tab="tripcalc"
+            class="@(ViewBag.ActiveTab == "tripcalc" ? "active" : "")">
+                Trip Calculation
+            </a>
+        </div>
+
+        <div class="content-panel">
+            @await Html.PartialAsync("_GuestTripCalc")
         </div>
     }
 </div>

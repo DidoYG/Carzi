@@ -6,7 +6,8 @@ namespace Carzi.Models
     {
         [Key]
         public int Id { get; set; }
-
+        
+        // User Details
         [Required]
         [MaxLength(50)]
         public string Username { get; set; } = string.Empty;
