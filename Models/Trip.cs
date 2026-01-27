@@ -8,12 +8,12 @@ namespace Carzi.Models
         [Key]
         public int Id { get; set; }
 
-        // Relationship to Car
+        // Relationship to Vehicle
         [Required]
-        public int CarId { get; set; }
+        public int VehicleId { get; set; }
 
-        [ForeignKey(nameof(CarId))]
-        public Car Car { get; set; } = null!;
+        [ForeignKey(nameof(VehicleId))]
+        public Vehicle Vehicle { get; set; } = null!;
 
         // Locations
         [Required]

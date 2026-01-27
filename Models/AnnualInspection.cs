@@ -8,23 +8,18 @@ namespace Carzi.Models
         [Key]
         public int Id { get; set; }
 
-        // Relationship to Car
         [Required]
-        public int CarId { get; set; }
+        public int VehicleId { get; set; }
 
-        [ForeignKey(nameof(CarId))]
-        public Car Car { get; set; } = null!;
+        [ForeignKey(nameof(VehicleId))]
+        public Vehicle Vehicle { get; set; } = null!;
 
-        // Inspection price
         [Required]
-        [Column(TypeName = "decimal(10,2)")]
-        public decimal Price { get; set; }
+        public int InspectionTypeId { get; set; }
 
-        // Eco category
-        [Required]
-        public int EcoCategory { get; set; }
+        [ForeignKey(nameof(InspectionTypeId))]
+        public AnnualInspectionType InspectionType { get; set; } = null!;
 
-        // Inspection dates
         [Required]
         public DateTime InspectionDate { get; set; }
 
@@ -32,9 +27,15 @@ namespace Carzi.Models
         public DateTime ValidUntil { get; set; }
 
         [Required]
+        public int EcoCategory { get; set; }
+
+        [Required]
         public int Odometer { get; set; }
 
+        [Required]
+        [Column(TypeName = "decimal(10,2)")]
+        public decimal Price { get; set; }
+
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     }
 }

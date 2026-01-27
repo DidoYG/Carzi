@@ -8,35 +8,31 @@ namespace Carzi.Models
         [Key]
         public int Id { get; set; }
 
-        // Relationship to Car
         [Required]
-        public int CarId { get; set; }
+        public int VehicleId { get; set; }
 
-        [ForeignKey(nameof(CarId))]
-        public Car Car { get; set; } = null!;
+        [ForeignKey(nameof(VehicleId))]
+        public Vehicle Vehicle { get; set; } = null!;
 
-        // Price
         [Required]
-        [Column(TypeName = "decimal(10,2)")]
-        public decimal Price { get; set; }
+        public int VignetteTypeId { get; set; }
 
-        // Validity period
+        [ForeignKey(nameof(VignetteTypeId))]
+        public VignetteType VignetteType { get; set; } = null!;
+
+        [Required]
+        public DateTime PurchaseDate { get; set; }
+
         [Required]
         public DateTime ValidFrom { get; set; }
 
         [Required]
         public DateTime ValidTo { get; set; }
 
-        // day, week, month, quarter, year
         [Required]
-        [MaxLength(10)]
-        public string PeriodType { get; set; } = string.Empty;
-
-        // Purchase date
-        [Required]
-        public DateTime PurchaseDate { get; set; }
+        [Column(TypeName = "decimal(10,2)")]
+        public decimal Price { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     }
 }

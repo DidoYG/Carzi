@@ -54,11 +54,41 @@ namespace Carzi.Controllers
 
         // Register method POST
         [HttpPost]
-        public async Task<IActionResult> Register(string username, string email, string password)
+        public async Task<IActionResult> Register(
+            string username,
+            string email,
+            string password,
+            string confirmPassword)
         {
+            ViewBag.ShowRegister = true;
+
+            if (password != confirmPassword)
+            {
+                ViewBag.Error = "Passwords do not match.";
+                return View("Index");
+            }
+
+            if (password.Length < 8)
+            {
+                ViewBag.Error = "Password must be at least 8 characters long.";
+                return View("Index");
+            }
+
+            if (!new System.ComponentModel.DataAnnotations.EmailAddressAttribute().IsValid(email))
+            {
+                ViewBag.Error = "Invalid email address.";
+                return View("Index");
+            }
+
             if (_context.Users.Any(u => u.Username == username))
             {
                 ViewBag.Error = "Username already exists.";
+                return View("Index");
+            }
+
+            if (_context.Users.Any(u => u.Email == email))
+            {
+                ViewBag.Error = "Email already registered.";
                 return View("Index");
             }
 

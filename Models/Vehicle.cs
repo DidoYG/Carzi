@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Carzi.Models
 {
-    public class Car
+    public class Vehicle
     {
         [Key]
         public int Id { get; set; }

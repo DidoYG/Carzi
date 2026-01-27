@@ -9,12 +9,14 @@ namespace Carzi.Data
             : base(options) { }
 
         // DbSets for each model
-        public DbSet<User> Users { get; set; }
-        public DbSet<Car> Cars { get; set; }
-        public DbSet<Fuel> Fuels { get; set; }
-        public DbSet<Vignette> Vignettes { get; set; }
-        public DbSet<TplInsurance> TplInsurances { get; set; }
         public DbSet<AnnualInspection> AnnualInspections { get; set; }
+        public DbSet<AnnualInspectionType> AnnualInspectionTypes { get; set; }
+        public DbSet<Fuel> Fuels { get; set; }
+        public DbSet<TplInsurance> TplInsurances { get; set; }
         public DbSet<Trip> Trips { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Vehicle> Vehicles { get; set; }
+        public DbSet<Vignette> Vignettes { get; set; }
+        public DbSet<VignetteType> VignetteTypes { get; set; }
     }
 }
