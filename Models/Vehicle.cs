@@ -17,6 +17,9 @@ namespace Carzi.Models
 
         // Vehicle details
         [Required]
+        public bool IsCar { get; set; } = true;
+
+        [Required]
         [MaxLength(50)]
         public string Brand { get; set; } = string.Empty;
 

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Carzi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260126160955_InitialCreate")]
+    [Migration("20260130072616_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -273,6 +273,9 @@ namespace Carzi.Migrations
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsCar")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("LicensePlate")
                         .IsRequired()

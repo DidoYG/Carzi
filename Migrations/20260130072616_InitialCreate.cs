@@ -82,6 +82,7 @@ namespace Carzi.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsCar = table.Column<bool>(type: "INTEGER", nullable: false),
                     Brand = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
                     Model = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
                     Year = table.Column<int>(type: "INTEGER", nullable: false),

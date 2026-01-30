@@ -271,6 +271,9 @@ namespace Carzi.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("IsCar")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("LicensePlate")
                         .IsRequired()
                         .HasMaxLength(20)
