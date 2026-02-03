@@ -19,13 +19,14 @@ public class HomeController : Controller
     public IActionResult Index(string? tab)
     {   
         // Set menu tabs based on user role
+        if (User.IsInRole("Admin"))
+        {
+            return RedirectToAction("Index", "Admin");
+        }
+
         if (User.IsInRole("Guest"))
         {
             ViewBag.ActiveTab = "tripcalc";
-        }
-        else if (User.IsInRole("Admin"))
-        {
-            ViewBag.ActiveTab = tab ?? "users";
         }
         else // Registered user
         {

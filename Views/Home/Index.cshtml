@@ -84,35 +84,6 @@
             @await Html.PartialAsync($"_User{ViewBag.ActiveTab}")
         </div>
     }
-    else if (isAdminRole)
-    {
-        <!-- Admin menu tabs -->
-        <div class="tabs">
-            <a asp-controller="Home" asp-action="Index" asp-route-tab="users"
-            class="@(ViewBag.ActiveTab == "users" ? "active" : "")">
-                Users
-            </a>
-
-            <a asp-controller="Home" asp-action="Index" asp-route-tab="vignettes"
-            class="@(ViewBag.ActiveTab == "vignettes" ? "active" : "")">
-                Vignettes
-            </a>
-
-            <a asp-controller="Home" asp-action="Index" asp-route-tab="fuels"
-            class="@(ViewBag.ActiveTab == "fuels" ? "active" : "")">
-                Fuels
-            </a>
-
-            <a asp-controller="Home" asp-action="Index" asp-route-tab="inspections"
-            class="@(ViewBag.ActiveTab == "inspections" ? "active" : "")">
-                Annual Inspections
-            </a>
-        </div>
-
-        <div class="content-panel">
-            @await Html.PartialAsync($"_Admin{ViewBag.ActiveTab}")
-        </div>
-    }
     else if (isGuestRole)
     {
         <!-- Guest menu tabs -->

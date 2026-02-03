@@ -1,0 +1,17 @@
+@model Carzi.Models.User
+
+<h3>Edit User</h3>
+
+<form method="post">
+    <label>Username</label>
+    <input class="form-control" name="username" value="@Model.Username" />
+
+    <label>Role</label>
+    <select class="form-control" name="role">
+        <option selected="@("User" == Model.Role)">User</option>
+        <option selected="@("Admin" == Model.Role)">Admin</option>
+    </select>
+
+    <br />
+    <button class="btn btn-primary">Save</button>
+</form>

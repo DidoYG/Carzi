@@ -49,6 +49,12 @@ namespace Carzi.Controllers
             }
 
             await SignInUser(user.Id, user.Username, user.Role, true);
+
+            if (user.Role == "Admin")
+            {
+                return RedirectToAction("Index", "Admin");
+            }
+
             return RedirectToAction("Index", "Home");
         }
 
@@ -104,7 +110,14 @@ namespace Carzi.Controllers
             _context.SaveChanges();
 
             await SignInUser(user.Id, user.Username, user.Role, true);
+
+            if (user.Role == "Admin")
+            {
+                return RedirectToAction("Index", "Admin");
+            }
+
             return RedirectToAction("Index", "Home");
+
         }
 
         // Continue as Guest POST
