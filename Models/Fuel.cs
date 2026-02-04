@@ -8,12 +8,12 @@ namespace Carzi.Models
         [Key]
         public int Id { get; set; }
 
-        // Petrol, Diesel, LPG, Electric
+        // Petrol, Diesel, LPG
         [Required]
         [MaxLength(50)]
         public string Name { get; set; } = string.Empty;
 
-        // Price per liter
+        // Price per liter in €
         [Required]
         [Column(TypeName = "decimal(10,2)")]
         public decimal PricePerLiter { get; set; }

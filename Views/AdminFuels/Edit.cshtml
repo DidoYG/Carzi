@@ -1,0 +1,14 @@
+@model Carzi.Models.Fuel
+
+<h3>Edit Fuel</h3>
+
+<form method="post">
+    <label>Name</label>
+    <input class="form-control" name="name" value="@Model.Name" required />
+
+    <label>Price (€ / liter)</label>
+    <input type="number" step="0.01" class="form-control" name="pricePerLiter" value="@Model.PricePerLiter" required />
+
+    <br />
+    <button class="btn btn-primary">Save</button>
+</form>

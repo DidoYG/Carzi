@@ -1,0 +1,46 @@
+@model List<Carzi.Models.Fuel>
+
+<h3>Manage Fuels</h3>
+
+<a asp-action="Create" class="btn btn-success mb-3">
+    + Add New Fuel
+</a>
+
+<form asp-action="UpdateFromApi" method="post" class="d-inline">
+    <button type="submit" class="btn btn-secondary mb-3 ms-2">
+        Update Fuels
+    </button>
+</form>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Fuel</th>
+            <th>Price (€ / liter)</th>
+            <th>Updated</th>
+            <th style="width:180px;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var fuel in Model)
+    {
+        <tr>
+            <td>@fuel.Name</td>
+            <td>@fuel.PricePerLiter</td>
+            <td>@fuel.UpdatedAt.ToShortDateString()</td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@fuel.Id"
+                   class="btn btn-sm btn-primary">Edit</a>
+
+                <form asp-action="Delete" asp-route-id="@fuel.Id"
+                    method="post" class="d-inline">
+                    <button class="btn btn-sm btn-danger"
+                            onclick="return confirm('Delete this fuel?')">
+                        Delete
+                    </button>
+                </form>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

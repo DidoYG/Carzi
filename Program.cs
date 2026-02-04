@@ -24,6 +24,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 builder.Services.AddAuthorization();
 
+builder.Services.AddHttpClient<FuelPriceService>();
+
 var app = builder.Build();
 
 // Pipeline
