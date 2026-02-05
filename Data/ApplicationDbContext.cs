@@ -12,6 +12,7 @@ namespace Carzi.Data
         public DbSet<AnnualInspection> AnnualInspections { get; set; }
         public DbSet<AnnualInspectionType> AnnualInspectionTypes { get; set; }
         public DbSet<Fuel> Fuels { get; set; }
+        public DbSet<FuelType> FuelTypes { get; set; }
         public DbSet<TplInsurance> TplInsurances { get; set; }
         public DbSet<Trip> Trips { get; set; }
         public DbSet<User> Users { get; set; }

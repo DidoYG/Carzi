@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Carzi.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialCleanSchema : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -27,19 +27,18 @@ namespace Carzi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Fuels",
+                name: "FuelTypes",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
                     PricePerLiter = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Fuels", x => x.Id);
+                    table.PrimaryKey("PK_FuelTypes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -134,6 +133,36 @@ namespace Carzi.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_AnnualInspections_Vehicles_VehicleId",
+                        column: x => x.VehicleId,
+                        principalTable: "Vehicles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Fuels",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    FuelTypeId = table.Column<int>(type: "INTEGER", nullable: false),
+                    VehicleId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PricePerLiter = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    Liters = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    TotalCost = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    Date = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Fuels", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Fuels_FuelTypes_FuelTypeId",
+                        column: x => x.FuelTypeId,
+                        principalTable: "FuelTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Fuels_Vehicles_VehicleId",
                         column: x => x.VehicleId,
                         principalTable: "Vehicles",
                         principalColumn: "Id",
@@ -242,6 +271,16 @@ namespace Carzi.Migrations
                 column: "VehicleId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Fuels_FuelTypeId",
+                table: "Fuels",
+                column: "FuelTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Fuels_VehicleId",
+                table: "Fuels",
+                column: "VehicleId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TplInsurances_VehicleId",
                 table: "TplInsurances",
                 column: "VehicleId");
@@ -287,6 +326,9 @@ namespace Carzi.Migrations
 
             migrationBuilder.DropTable(
                 name: "AnnualInspectionTypes");
+
+            migrationBuilder.DropTable(
+                name: "FuelTypes");
 
             migrationBuilder.DropTable(
                 name: "Vehicles");

@@ -8,17 +8,32 @@ namespace Carzi.Models
         [Key]
         public int Id { get; set; }
 
-        // Petrol, Diesel, LPG
+        // Relations
         [Required]
-        [MaxLength(50)]
-        public string Name { get; set; } = string.Empty;
+        public int FuelTypeId { get; set; }
 
-        // Price per liter in €
+        [ForeignKey(nameof(FuelTypeId))]
+        public FuelType FuelType { get; set; } = null!;
+
+        [Required]
+        public int VehicleId { get; set; }
+
+        [ForeignKey(nameof(VehicleId))]
+        public Vehicle Vehicle { get; set; } = null!;
+
+        // Fill-up details
         [Required]
         [Column(TypeName = "decimal(10,2)")]
         public decimal PricePerLiter { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+        [Required]
+        [Column(TypeName = "decimal(10,2)")]
+        public decimal Liters { get; set; }
+
+        [Required]
+        [Column(TypeName = "decimal(10,2)")]
+        public decimal TotalCost { get; set; }
+
+        public DateTime Date { get; set; } = DateTime.UtcNow;
     }
 }

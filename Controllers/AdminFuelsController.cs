@@ -17,14 +17,14 @@ public class AdminFuelsController : Controller
         _fuelService = fuelService;
     }
 
-    // List all fuels
+    // List all fuel types
     public IActionResult Index()
     {
-        var fuels = _context.Fuels.ToList();
+        var fuels = _context.FuelTypes.ToList();
         return View(fuels);
     }
 
-    // Update fuels from Fuelo.net API
+    // Update fuel prices from Fuelo.net API
     [HttpPost]
     public async Task<IActionResult> UpdateFromApi()
     {
@@ -32,28 +32,22 @@ public class AdminFuelsController : Controller
 
         foreach (var apiFuel in apiFuels)
         {
-            var fuel = _context.Fuels
+            var fuelType = _context.FuelTypes
                 .FirstOrDefault(f => f.Name == apiFuel.Name);
 
-            if (fuel == null)
+            if (fuelType == null)
             {
-                // Insert new fuel
-                _context.Fuels.Add(new Fuel
+                _context.FuelTypes.Add(new FuelType
                 {
                     Name = apiFuel.Name,
                     PricePerLiter = apiFuel.Price,
-                    CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow
                 });
             }
-            else
+            else if (fuelType.PricePerLiter != apiFuel.Price)
             {
-                // Update only if price changed
-                if (fuel.PricePerLiter != apiFuel.Price)
-                {
-                    fuel.PricePerLiter = apiFuel.Price;
-                    fuel.UpdatedAt = DateTime.UtcNow;
-                }
+                fuelType.PricePerLiter = apiFuel.Price;
+                fuelType.UpdatedAt = DateTime.UtcNow;
             }
         }
 
@@ -63,16 +57,15 @@ public class AdminFuelsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    // Create new fuel
+    // Create new fuel type
     [HttpGet]
     public IActionResult Create()
     {
         return View();
     }
 
-    // Create new fuel
     [HttpPost]
-    public IActionResult Create(string name, decimal pricePerLiter)
+    public IActionResult Create(string name, decimal currentPricePerLiter)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
@@ -80,66 +73,64 @@ public class AdminFuelsController : Controller
             return View();
         }
 
-        if (_context.Fuels.Any(f => f.Name == name))
+        if (_context.FuelTypes.Any(f => f.Name == name))
         {
             ModelState.AddModelError("", "Fuel already exists.");
             return View();
         }
 
-        var fuel = new Fuel
+        var fuelType = new FuelType
         {
             Name = name,
-            PricePerLiter = pricePerLiter,
-            CreatedAt = DateTime.UtcNow,
+            PricePerLiter = currentPricePerLiter,
             UpdatedAt = DateTime.UtcNow
         };
 
-        _context.Fuels.Add(fuel);
+        _context.FuelTypes.Add(fuelType);
         _context.SaveChanges();
 
         return RedirectToAction(nameof(Index));
     }
 
-    // Edit fuel
+    // Edit existing fuel type
     [HttpGet]
     public IActionResult Edit(int id)
     {
-        var fuel = _context.Fuels.Find(id);
-        if (fuel == null) return NotFound();
+        var fuelType = _context.FuelTypes.Find(id);
+        if (fuelType == null) return NotFound();
 
-        return View(fuel);
+        return View(fuelType);
     }
 
-    // Edit fuel
     [HttpPost]
-    public IActionResult Edit(int id, string name, decimal pricePerLiter)
+    public IActionResult Edit(int id, string name, decimal currentPricePerLiter)
     {
-        var fuel = _context.Fuels.Find(id);
-        if (fuel == null) return NotFound();
+        var fuelType = _context.FuelTypes.Find(id);
+        if (fuelType == null) return NotFound();
 
-        if (_context.Fuels.Any(f => f.Name == name && f.Id != id))
+        if (_context.FuelTypes.Any(f => f.Name == name && f.Id != id))
         {
             ModelState.AddModelError("", "Fuel name already exists.");
-            return View(fuel);
+            return View(fuelType);
         }
 
-        fuel.Name = name;
-        fuel.PricePerLiter = pricePerLiter;
-        fuel.UpdatedAt = DateTime.UtcNow;
+        fuelType.Name = name;
+        fuelType.PricePerLiter = currentPricePerLiter;
+        fuelType.UpdatedAt = DateTime.UtcNow;
 
         _context.SaveChanges();
 
         return RedirectToAction(nameof(Index));
     }
 
-    // Delete fuel
+    // Delete fuels
     [HttpPost]
     public IActionResult Delete(int id)
     {
-        var fuel = _context.Fuels.Find(id);
-        if (fuel == null) return NotFound();
+        var fuelType = _context.FuelTypes.Find(id);
+        if (fuelType == null) return NotFound();
 
-        _context.Fuels.Remove(fuel);
+        _context.FuelTypes.Remove(fuelType);
         _context.SaveChanges();
 
         return RedirectToAction(nameof(Index));

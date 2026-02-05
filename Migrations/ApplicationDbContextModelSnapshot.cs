@@ -84,8 +84,38 @@ namespace Carzi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTime>("Date")
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("FuelTypeId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Liters")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<decimal>("PricePerLiter")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<decimal>("TotalCost")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<int>("VehicleId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FuelTypeId");
+
+                    b.HasIndex("VehicleId");
+
+                    b.ToTable("Fuels");
+                });
+
+            modelBuilder.Entity("Carzi.Models.FuelType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -100,7 +130,7 @@ namespace Carzi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Fuels");
+                    b.ToTable("FuelTypes");
                 });
 
             modelBuilder.Entity("Carzi.Models.TplInsurance", b =>
@@ -390,6 +420,25 @@ namespace Carzi.Migrations
                         .IsRequired();
 
                     b.Navigation("InspectionType");
+
+                    b.Navigation("Vehicle");
+                });
+
+            modelBuilder.Entity("Carzi.Models.Fuel", b =>
+                {
+                    b.HasOne("Carzi.Models.FuelType", "FuelType")
+                        .WithMany()
+                        .HasForeignKey("FuelTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Carzi.Models.Vehicle", "Vehicle")
+                        .WithMany()
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FuelType");
 
                     b.Navigation("Vehicle");
                 });
