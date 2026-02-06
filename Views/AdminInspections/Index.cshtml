@@ -1,0 +1,6 @@
+@model List<Carzi.Models.AnnualInspectionType>
+@{
+    Layout = "~/Views/Admin/_AdminLayout.cshtml";
+}
+
+@await Html.PartialAsync("_Inspectionstab", Model)

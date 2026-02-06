@@ -1,0 +1,44 @@
+@model List<Carzi.Models.VignetteType>
+
+<h3>Manage Vignettes</h3>
+
+<a asp-action="Create" class="btn btn-success mb-3">
+    + Add New Vignette
+</a>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Type</th>
+            <th>Validity (days)</th>
+            <th>Price (€)</th>
+            <th>Updated</th>
+            <th style="width:180px;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var v in Model)
+    {
+        <tr>
+            <td>@v.Name</td>
+            <td>@v.ValidityDays</td>
+            <td>@v.Price</td>
+            <td>@v.UpdatedAt.ToShortDateString()</td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@v.Id"
+                   class="btn btn-sm btn-primary">
+                    Edit
+                </a>
+
+                <form asp-action="Delete" asp-route-id="@v.Id"
+                      method="post" class="d-inline">
+                    <button class="btn btn-sm btn-danger"
+                            onclick="return confirm('Delete this vignette?')">
+                        Delete
+                    </button>
+                </form>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

@@ -1,0 +1,42 @@
+@model List<Carzi.Models.AnnualInspectionType>
+
+<h3>Manage Annual Inspections</h3>
+
+<a asp-action="Create" class="btn btn-success mb-3">
+    + Add New Inspection Type
+</a>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Type</th>
+            <th>Price (€)</th>
+            <th>Updated</th>
+            <th style="width:180px;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var i in Model)
+    {
+        <tr>
+            <td>@i.Name</td>
+            <td>@i.Price</td>
+            <td>@i.UpdatedAt.ToShortDateString()</td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@i.Id"
+                   class="btn btn-sm btn-primary">
+                    Edit
+                </a>
+
+                <form asp-action="Delete" asp-route-id="@i.Id"
+                      method="post" class="d-inline">
+                    <button class="btn btn-sm btn-danger"
+                            onclick="return confirm('Delete this inspection type?')">
+                        Delete
+                    </button>
+                </form>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

@@ -1,21 +1,36 @@
+@model Carzi.Models.User
+
+@{
+    Layout = "~/Views/Admin/_AdminLayout.cshtml";
+}
+
 <h3>Create User</h3>
 
 <form method="post">
-    <label>Username</label>
-    <input class="form-control" name="username" required />
+    <div class="mb-3">
+        <label>Username</label>
+        <input class="form-control" name="username" required />
+    </div>
 
-    <label>Email</label>
-    <input class="form-control" name="email" required />
+    <div class="mb-3">
+        <label>Email</label>
+        <input class="form-control" name="email" required />
+    </div>
 
-    <label>Password</label>
-    <input type="password" class="form-control" name="password" required />
+    <div class="mb-3">
+        <label>Password</label>
+        <input type="password" class="form-control" name="password" required />
+    </div>
 
-    <label>Role</label>
-    <select class="form-control" name="role">
-        <option>User</option>
-        <option>Admin</option>
-    </select>
-
-    <br />
+    <div class="mb-3">
+        <label>Role</label>
+        <select class="form-control" name="role">
+            <option>User</option>
+            <option>Admin</option>
+        </select>
+    </div>
+    
+    <br>
     <button class="btn btn-success">Create</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
 </form>
