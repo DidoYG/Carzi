@@ -52,7 +52,7 @@
 
     <!-- Welcome Title -->
     <div class="welcome">
-        Welcome, <strong>@username</strong>
+        <h2 class="mb-3">Welcome, Guest</h2>
     </div>
 
     @if (isUserRole)
@@ -86,12 +86,11 @@
     }
     else if (isGuestRole)
     {
-        <!-- Guest menu tabs -->
-        <div class="tabs">
-            <a asp-controller="Home" asp-action="Index" asp-route-tab="tripcalc"
-            class="@(ViewBag.ActiveTab == "tripcalc" ? "active" : "")">
-                Trip Calculation
-            </a>
+        <div class="text-center mb-4">
+            <h3 class="text-success mb-1"><strong>Trip Cost Calculator</strong></h3>
+            <label class="mb-0">
+                Estimate fuel and vignette costs for your trip
+            </label>
         </div>
 
         <div class="content-panel">

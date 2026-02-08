@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Carzi.Models.ViewModels;
+using Carzi.Data;
 using Carzi.Models;
 
 namespace Carzi.Controllers;
@@ -9,31 +11,40 @@ namespace Carzi.Controllers;
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
+    private readonly ApplicationDbContext _context;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
     {
         _logger = logger;
+        _context = context;
     }
 
     [Authorize]
     public IActionResult Index(string? tab)
-    {   
-        // Set menu tabs based on user role
+    {
         if (User.IsInRole("Admin"))
         {
             return RedirectToAction("Index", "Admin");
         }
 
+        var model = new TripCalculatorViewModel();
+
         if (User.IsInRole("Guest"))
         {
             ViewBag.ActiveTab = "tripcalc";
+
+            model.Fuels = _context.FuelTypes.ToList();
+
+            model.Vignettes = _context.VignetteTypes
+                .OrderBy(v => v.ValidityDays)
+                .ToList();
         }
-        else // Registered user
+        else
         {
             ViewBag.ActiveTab = tab ?? "dashboard";
         }
 
-        return View();
+        return View(model);
     }
 
     // Privacy Policy

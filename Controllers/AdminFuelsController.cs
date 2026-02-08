@@ -65,7 +65,7 @@ public class AdminFuelsController : Controller
     }
 
     [HttpPost]
-    public IActionResult Create(string name, decimal currentPricePerLiter)
+    public IActionResult Create(string name, decimal pricePerLiter)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
@@ -82,7 +82,7 @@ public class AdminFuelsController : Controller
         var fuelType = new FuelType
         {
             Name = name,
-            PricePerLiter = currentPricePerLiter,
+            PricePerLiter = pricePerLiter,
             UpdatedAt = DateTime.UtcNow
         };
 
@@ -103,7 +103,7 @@ public class AdminFuelsController : Controller
     }
 
     [HttpPost]
-    public IActionResult Edit(int id, string name, decimal currentPricePerLiter)
+    public IActionResult Edit(int id, string name, decimal pricePerLiter)
     {
         var fuelType = _context.FuelTypes.Find(id);
         if (fuelType == null) return NotFound();
@@ -115,7 +115,7 @@ public class AdminFuelsController : Controller
         }
 
         fuelType.Name = name;
-        fuelType.PricePerLiter = currentPricePerLiter;
+        fuelType.PricePerLiter = pricePerLiter;
         fuelType.UpdatedAt = DateTime.UtcNow;
 
         _context.SaveChanges();

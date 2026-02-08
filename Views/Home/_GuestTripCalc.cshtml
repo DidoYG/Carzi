@@ -1,7 +1,6 @@
-<h4>Trip Cost Calculator</h4>
+@model Carzi.Models.ViewModels.TripCalculatorViewModel
 
 <form id="tripForm">
-
     <!-- Base vehicle info -->
     <div class="mb-3">
         <label class="form-label">Distance (km)</label>
@@ -17,11 +16,13 @@
     <div class="mb-3">
         <label class="form-label">Fuel Type</label>
         <select id="fuelType" class="form-select">
-            <option>Petrol A95</option>
-            <option>Diesel</option>
-            <option>LPG</option>
-            <option>Petrol A98</option>
-            <option>Diesel Premium</option>
+        @foreach (var fuel in Model.Fuels)
+        {
+            <option value="@fuel.Id"
+                    data-price="@fuel.PricePerLiter">
+                    @fuel.Name
+            </option>
+        }
         </select>
     </div>
 
@@ -30,7 +31,7 @@
         <input type="number" id="fuelPrice" class="form-control" placeholder="e.g. 1.25" required>
     </div>
 
-    <!-- Vignette validity check -->
+    <!-- Is vignette needed check-->
     <div class="form-check mb-3">
         <input class="form-check-input" type="checkbox" id="hasVignette">
         <label class="form-check-label">
@@ -53,7 +54,14 @@
 
         <div class="mb-3">
             <label class="form-label">Vignette Type</label>
-            <select id="vignetteType" class="form-select"></select>
+            <select id="vignetteType" class="form-select">
+            @foreach (var v in Model.Vignettes)
+            {
+                <option value="@v.Price" data-days="@v.ValidityDays">
+                    @v.Name (€@v.Price)
+                </option>
+            }
+            </select>
         </div>
 
     </div>
@@ -65,51 +73,77 @@
 
 <hr />
 
-<div id="result" class="alert alert-info d-none"></div>
+<div id="result" class="alert alert-success d-none fs-5"></div>
 
 <p class="text-muted">
     Note: This calculation is not saved.
 </p>
 
 <script>
-    // Temp guest calculation logic until I implement Fuelo.net API and DB data for Vignettes 
-
     let vignetteManuallyChanged = false;
-
-    const vignetteTypes = [
-        { name: "Weekend", days: 2, price: 10 },
-        { name: "Week", days: 7, price: 15 },
-        { name: "Month", days: 30, price: 30 },
-        { name: "Quarter", days: 90, price: 60 },
-        { name: "Year", days: 365, price: 100 }
-    ];
 
     const vignetteSection = document.getElementById("vignetteSection");
     const hasVignette = document.getElementById("hasVignette");
     const vignetteSelect = document.getElementById("vignetteType");
 
-    vignetteSelect.addEventListener("change", () => {
-        vignetteManuallyChanged = true;
+    const startDateInput = document.getElementById("startDate");
+    const endDateInput = document.getElementById("endDate");
+
+    startDateInput.addEventListener("change", () => {
+        vignetteManuallyChanged = false;
     });
 
-    vignetteTypes.forEach(v => {
-        const opt = document.createElement("option");
-        opt.value = v.price;
-        opt.text = `${v.name} (€${v.price})`;
-        vignetteSelect.appendChild(opt);
+    endDateInput.addEventListener("change", () => {
+        vignetteManuallyChanged = false;
+    });
+
+    vignetteSelect.addEventListener("change", () => {
+        vignetteManuallyChanged = true;
     });
 
     hasVignette.addEventListener("change", () => {
         vignetteSection.style.display = hasVignette.checked ? "none" : "block";
     });
 
+    let fuelPriceManuallyChanged = false;
+
+    const fuelSelect = document.getElementById("fuelType");
+    const fuelPriceInput = document.getElementById("fuelPrice");
+
+    // When fuel changes → update price
+    fuelSelect.addEventListener("change", () => {
+        const selected = fuelSelect.options[fuelSelect.selectedIndex];
+
+        // Reset manual override when fuel type changes
+        fuelPriceManuallyChanged = false;
+
+        // Load DB price for selected fuel
+        fuelPriceInput.value =
+            parseFloat(selected.dataset.price).toFixed(2);
+    });
+
+
+    // Check for manual override of fuel price
+    fuelPriceInput.addEventListener("input", () => {
+        fuelPriceManuallyChanged = true;
+    });
+
     function calculateCost() {
 
         const distance = parseFloat(document.getElementById("distance").value);
         const consumption = parseFloat(document.getElementById("consumption").value);
-        const fuelPrice = parseFloat(document.getElementById("fuelPrice").value);
+        
+        let fuelPrice = parseFloat(fuelPriceInput.value);
 
-        if (isNaN(distance) || isNaN(consumption) || isNaN(fuelPrice)) {
+        if (isNaN(fuelPrice)) {
+            const selectedFuel =
+                fuelSelect.options[fuelSelect.selectedIndex];
+
+            fuelPrice = parseFloat(selectedFuel.dataset.price);
+        }
+
+        if (isNaN(distance) || isNaN(consumption)) {
+
             alert("Please fill in all required fields.");
             return;
         }
@@ -131,13 +165,11 @@
             const days =
                 Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
 
-            // Pick correct vignette
-            const suggested =
-                vignetteTypes.find(v => days <= v.days)
-                || vignetteTypes[vignetteTypes.length - 1];
+            // Suggest correct vignette type based on duration
+            const suggested = getSuggestedVignette(days);
 
             if (!vignetteManuallyChanged) {
-                vignetteSelect.value = suggested.price;
+                vignetteSelect.value = suggested.value;
             }
 
             vignetteCost = parseFloat(vignetteSelect.value);
@@ -153,4 +185,34 @@
             Vignette: €${vignetteCost.toFixed(2)}
         `;
     }
+
+    function getSuggestedVignette(days) {
+        const options = document.querySelectorAll("#vignetteType option");
+
+        for (let opt of options) {
+            if (days <= parseInt(opt.dataset.days)) {
+                return opt;
+            }
+        }
+        return options[options.length - 1];
+    }
+
+    function updateVignetteVisibility() {
+        vignetteSection.style.display = hasVignette.checked ? "none" : "block";
+    }
+
+    hasVignette.addEventListener("change", updateVignetteVisibility);
+
+    // Run once on page load
+    updateVignetteVisibility();
+
+    // Initialize fuel price from first option
+    window.addEventListener("load", () => {
+        const firstFuel =
+            fuelSelect.options[fuelSelect.selectedIndex];
+
+        fuelPriceInput.value =
+            parseFloat(firstFuel.dataset.price).toFixed(2);
+    });
+
 </script>
