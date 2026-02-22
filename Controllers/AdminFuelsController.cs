@@ -53,7 +53,7 @@ public class AdminFuelsController : Controller
 
         await _context.SaveChangesAsync();
 
-        TempData["Success"] = "Fuel prices updated successfully.";
+        TempData["SuccessMessage"] = "Fuel prices updated successfully.";
         return RedirectToAction(nameof(Index));
     }
 
@@ -88,7 +88,7 @@ public class AdminFuelsController : Controller
 
         _context.FuelTypes.Add(fuelType);
         _context.SaveChanges();
-
+        TempData["SuccessMessage"] = "Fuel created successfully.";
         return RedirectToAction(nameof(Index));
     }
 
@@ -119,7 +119,7 @@ public class AdminFuelsController : Controller
         fuelType.UpdatedAt = DateTime.UtcNow;
 
         _context.SaveChanges();
-
+        TempData["SuccessMessage"] = "Fuel updated successfully.";
         return RedirectToAction(nameof(Index));
     }
 
@@ -132,7 +132,7 @@ public class AdminFuelsController : Controller
 
         _context.FuelTypes.Remove(fuelType);
         _context.SaveChanges();
-
+        TempData["SuccessMessage"] = "Fuel deleted successfully.";
         return RedirectToAction(nameof(Index));
     }
 }

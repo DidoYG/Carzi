@@ -58,7 +58,7 @@ public class AdminUsersController : Controller
 
         _context.Users.Add(user);
         _context.SaveChanges();
-
+        TempData["SuccessMessage"] = "User created successfully.";
         return RedirectToAction(nameof(Index));
     }
 
@@ -90,6 +90,7 @@ public class AdminUsersController : Controller
         user.CreatedAt = DateTime.UtcNow;
 
         _context.SaveChanges();
+        TempData["SuccessMessage"] = "User updated successfully.";
         return RedirectToAction(nameof(Index));
     }
 
@@ -117,6 +118,7 @@ public class AdminUsersController : Controller
         user.CreatedAt = DateTime.UtcNow;
 
         _context.SaveChanges();
+        TempData["SuccessMessage"] = "Password reset successfully.";
         return RedirectToAction(nameof(Index));
     }
 
@@ -132,7 +134,7 @@ public class AdminUsersController : Controller
 
         _context.Users.Remove(user);
         _context.SaveChanges();
-
+        TempData["SuccessMessage"] = "User deleted successfully.";
         return RedirectToAction(nameof(Index));
     }
 }

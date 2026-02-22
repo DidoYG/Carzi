@@ -40,6 +40,24 @@
 
         <h2 class="mb-3">Admin Panel</h2>
 
+        @* Success message *@
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        @* Error Message *@
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show">
+                @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
         <ul class="nav nav-tabs mb-4">
             <li class="nav-item">
                 <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminUsers" ? "active" : "")"
@@ -74,5 +92,24 @@
     </main>
 
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    @RenderSection("Scripts", required: false)
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const alerts = document.querySelectorAll(".alert");
+
+            alerts.forEach(function (alert) {
+                setTimeout(function () {
+
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+
+                }, 3000); // 3000ms = 3 seconds
+            });
+
+        });
+    </script>
 </body>
 </html>

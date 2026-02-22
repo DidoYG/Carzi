@@ -6,21 +6,29 @@
 
 <h3>Edit User</h3>
 
-<form method="post">
+<form asp-action="Edit" method="post">
+
+    <input type="hidden" asp-for="Id" />
+
     <div class="mb-3">
-        <label>Username</label>
-        <input class="form-control" name="username" value="@Model.Username" />
+        <label asp-for="Username"></label>
+        <input asp-for="Username" class="form-control" />
+        <span asp-validation-for="Username" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
-        <label>Role</label>
-        <select class="form-control" name="role">
-            <option selected="@("User" == Model.Role)">User</option>
-            <option selected="@("Admin" == Model.Role)">Admin</option>
+        <label asp-for="Role"></label>
+        <select asp-for="Role" class="form-control">
+            <option>User</option>
+            <option>Admin</option>
         </select>
+        <span asp-validation-for="Role" class="text-danger"></span>
     </div>
 
-    <br>
     <button class="btn btn-primary">Update</button>
     <a asp-action="Index" class="btn btn-secondary">Cancel</a>
 </form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
