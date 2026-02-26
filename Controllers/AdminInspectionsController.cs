@@ -53,6 +53,8 @@ public class AdminInspectionsController : Controller
         });
 
         _context.SaveChanges();
+
+        TempData["SuccessMessage"] = "Inspection type created successfully.";
         return RedirectToAction(nameof(Index));
     }
 
@@ -83,6 +85,8 @@ public class AdminInspectionsController : Controller
         inspection.UpdatedAt = DateTime.UtcNow;
 
         _context.SaveChanges();
+
+        TempData["SuccessMessage"] = "Inspection type updated successfully.";
         return RedirectToAction(nameof(Index));
     }
 
@@ -96,6 +100,7 @@ public class AdminInspectionsController : Controller
         _context.AnnualInspectionTypes.Remove(inspection);
         _context.SaveChanges();
 
+        TempData["SuccessMessage"] = "Inspection type deleted successfully.";
         return RedirectToAction(nameof(Index));
     }
 }

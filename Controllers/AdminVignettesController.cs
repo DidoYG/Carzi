@@ -56,6 +56,7 @@ public class AdminVignettesController : Controller
         _context.VignetteTypes.Add(vignette);
         _context.SaveChanges();
 
+        TempData["SuccessMessage"] = "Vignette created successfully.";
         return RedirectToAction(nameof(Index));
     }
 
@@ -88,6 +89,7 @@ public class AdminVignettesController : Controller
 
         _context.SaveChanges();
 
+        TempData["SuccessMessage"] = "Vignette updated successfully.";
         return RedirectToAction(nameof(Index));
     }
 
@@ -101,6 +103,7 @@ public class AdminVignettesController : Controller
         _context.VignetteTypes.Remove(vignette);
         _context.SaveChanges();
 
+        TempData["SuccessMessage"] = "Vignette deleted successfully.";
         return RedirectToAction(nameof(Index));
     }
 }
