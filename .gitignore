@@ -1,0 +1,23 @@
+# Folders
+bin/
+obj/
+out/
+.vscode/
+publish/
+.nuget/
+temp/
+
+# Files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+!.vscode/extensions.json
+.DS_Store
+Thumbs.db
+*.log
+appsettings.Development.json
+appsettings.json
+*.db
+*.db-shm
+*.db-wal
