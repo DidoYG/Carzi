@@ -20,7 +20,7 @@
     {
         <tr>
             <td>@i.Name</td>
-            <td>@i.Price</td>
+            <td>@i.Price.ToString("F2")</td>
             <td>@i.UpdatedAt.ToShortDateString()</td>
             <td>
                 <a asp-action="Edit" asp-route-id="@i.Id"

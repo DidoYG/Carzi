@@ -22,7 +22,7 @@
         <tr>
             <td>@v.Name</td>
             <td>@v.ValidityDays</td>
-            <td>@v.Price</td>
+            <td>@v.Price.ToString("F2")</td>
             <td>@v.UpdatedAt.ToShortDateString()</td>
             <td>
                 <a asp-action="Edit" asp-route-id="@v.Id"

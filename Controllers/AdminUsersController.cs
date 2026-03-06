@@ -32,17 +32,25 @@ public class AdminUsersController : Controller
     [HttpPost]
     public IActionResult Create(string username, string email, string password, string role)
     {
-        if (_context.Users.Any(u => u.Username == username))
-            ModelState.AddModelError("Username", "Username already exists.");
+        if (string.IsNullOrWhiteSpace(username))
+            ModelState.AddModelError("Username", "Username is required.");
 
-        if (_context.Users.Any(u => u.Email == email))
-            ModelState.AddModelError("Email", "Email already registered.");
+        if (string.IsNullOrWhiteSpace(email))
+            ModelState.AddModelError("Email", "Email is required.");
 
-        if (password.Length < 8)
+        if (string.IsNullOrWhiteSpace(password))
+            ModelState.AddModelError("Password", "Password is required.");
+        else if (password.Length < 8)
             ModelState.AddModelError("Password", "Password must be at least 8 characters.");
 
-        if (!new EmailAddressAttribute().IsValid(email))
+        if (!string.IsNullOrWhiteSpace(email) && !new EmailAddressAttribute().IsValid(email))
             ModelState.AddModelError("Email", "Invalid email address.");
+
+        if (!string.IsNullOrWhiteSpace(username) && _context.Users.Any(u => u.Username == username))
+            ModelState.AddModelError("Username", "Username already exists.");
+
+        if (!string.IsNullOrWhiteSpace(email) && _context.Users.Any(u => u.Email == email))
+            ModelState.AddModelError("Email", "Email already registered.");
 
         if (!ModelState.IsValid)
             return View();
@@ -58,6 +66,7 @@ public class AdminUsersController : Controller
 
         _context.Users.Add(user);
         _context.SaveChanges();
+
         TempData["SuccessMessage"] = "User created successfully.";
         return RedirectToAction(nameof(Index));
     }
@@ -79,7 +88,11 @@ public class AdminUsersController : Controller
         var user = _context.Users.Find(id);
         if (user == null) return NotFound();
 
-        if (_context.Users.Any(u => u.Username == username && u.Id != id))
+        if (string.IsNullOrWhiteSpace(username))
+            ModelState.AddModelError("Username", "Username is required.");
+
+        if (!string.IsNullOrWhiteSpace(username) &&
+            _context.Users.Any(u => u.Username == username && u.Id != id))
             ModelState.AddModelError("Username", "Username already exists.");
 
         if (!ModelState.IsValid)
@@ -90,6 +103,7 @@ public class AdminUsersController : Controller
         user.CreatedAt = DateTime.UtcNow;
 
         _context.SaveChanges();
+
         TempData["SuccessMessage"] = "User updated successfully.";
         return RedirectToAction(nameof(Index));
     }
@@ -105,6 +119,12 @@ public class AdminUsersController : Controller
     [HttpPost]
     public IActionResult ResetPassword(int id, string newPassword)
     {
+        if (string.IsNullOrWhiteSpace(newPassword))
+        {
+            ModelState.AddModelError("Password", "Password is required.");
+            return View(id);
+        }
+
         if (newPassword.Length < 8)
         {
             ModelState.AddModelError("Password", "Password must be at least 8 characters.");
@@ -118,6 +138,7 @@ public class AdminUsersController : Controller
         user.CreatedAt = DateTime.UtcNow;
 
         _context.SaveChanges();
+
         TempData["SuccessMessage"] = "Password reset successfully.";
         return RedirectToAction(nameof(Index));
     }

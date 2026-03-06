@@ -26,7 +26,7 @@
     {
         <tr>
             <td>@fuel.Name</td>
-            <td>@fuel.PricePerLiter</td>
+            <td>@fuel.PricePerLiter.ToString("F2")</td>
             <td>@fuel.UpdatedAt.ToShortDateString()</td>
             <td>
                 <a asp-action="Edit" asp-route-id="@fuel.Id"

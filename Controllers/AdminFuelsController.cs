@@ -108,6 +108,12 @@ public class AdminFuelsController : Controller
         var fuelType = _context.FuelTypes.Find(id);
         if (fuelType == null) return NotFound();
 
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            ModelState.AddModelError("", "Fuel name is required.");
+            return View(fuelType);
+        }
+
         if (_context.FuelTypes.Any(f => f.Name == name && f.Id != id))
         {
             ModelState.AddModelError("", "Fuel name already exists.");
@@ -119,6 +125,7 @@ public class AdminFuelsController : Controller
         fuelType.UpdatedAt = DateTime.UtcNow;
 
         _context.SaveChanges();
+
         TempData["SuccessMessage"] = "Fuel updated successfully.";
         return RedirectToAction(nameof(Index));
     }

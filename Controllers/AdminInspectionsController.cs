@@ -74,6 +74,12 @@ public class AdminInspectionsController : Controller
         var inspection = _context.AnnualInspectionTypes.Find(id);
         if (inspection == null) return NotFound();
 
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            ModelState.AddModelError("", "Name is required.");
+            return View(inspection);
+        }
+
         if (_context.AnnualInspectionTypes.Any(i => i.Name == name && i.Id != id))
         {
             ModelState.AddModelError("", "Inspection type already exists.");

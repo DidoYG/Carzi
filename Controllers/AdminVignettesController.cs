@@ -76,6 +76,12 @@ public class AdminVignettesController : Controller
         var vignette = _context.VignetteTypes.Find(id);
         if (vignette == null) return NotFound();
 
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            ModelState.AddModelError("", "Name is required.");
+            return View(vignette);
+        }
+
         if (_context.VignetteTypes.Any(v => v.Name == name && v.Id != id))
         {
             ModelState.AddModelError("", "Vignette name already exists.");
