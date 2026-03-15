@@ -55,36 +55,7 @@
         <h2 class="mb-3">Welcome, Guest</h2>
     </div>
 
-    @if (isUserRole)
-    {
-        <!-- Register User menu tabs -->
-        <div class="tabs">
-            <a asp-controller="Home" asp-action="Index" asp-route-tab="dashboard"
-            class="@(ViewBag.ActiveTab == "dashboard" ? "active" : "")">
-                Dashboard
-            </a>
-
-            <a asp-controller="Home" asp-action="Index" asp-route-tab="vehicles"
-            class="@(ViewBag.ActiveTab == "vehicles" ? "active" : "")">
-                Vehicles
-            </a>
-
-            <a asp-controller="Home" asp-action="Index" asp-route-tab="expenses"
-            class="@(ViewBag.ActiveTab == "expenses" ? "active" : "")">
-                Expenses
-            </a>
-
-            <a asp-controller="Home" asp-action="Index" asp-route-tab="trips"
-            class="@(ViewBag.ActiveTab == "trips" ? "active" : "")">
-                Trips
-            </a>
-        </div>
-
-        <div class="content-panel">
-            @await Html.PartialAsync($"_User{ViewBag.ActiveTab}")
-        </div>
-    }
-    else if (isGuestRole)
+    @if (isGuestRole)
     {
         <div class="text-center mb-4">
             <h3 class="text-success mb-1"><strong>Trip Cost Calculator</strong></h3>

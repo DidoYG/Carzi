@@ -54,6 +54,10 @@ namespace Carzi.Controllers
             {
                 return RedirectToAction("Index", "Admin");
             }
+            else if (user.Role == "User")
+            {
+                return RedirectToAction("Index", "User");
+            }
 
             return RedirectToAction("Index", "Home");
         }
@@ -114,6 +118,10 @@ namespace Carzi.Controllers
             if (user.Role == "Admin")
             {
                 return RedirectToAction("Index", "Admin");
+            }
+            else if (user.Role == "User")
+            {
+                return RedirectToAction("Index", "User");
             }
 
             return RedirectToAction("Index", "Home");
