@@ -2,10 +2,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [Authorize(Roles = "User")]
-public class UserController : Controller
+public class UserDashboardController : Controller
 {
     public IActionResult Index()
     {
-        return RedirectToAction("Index", "UserDashboard");
+        return View();
     }
 }

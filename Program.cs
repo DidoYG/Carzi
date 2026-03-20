@@ -1,6 +1,7 @@
 using Carzi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +26,15 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddAuthorization();
 
 builder.Services.AddHttpClient<FuelPriceService>();
+
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add(new ResponseCacheAttribute
+    {
+        NoStore = true,
+        Location = ResponseCacheLocation.None
+    });
+});
 
 var app = builder.Build();
 

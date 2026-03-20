@@ -1,0 +1,46 @@
+@model List<Carzi.Models.Vehicle>
+
+<h3>My Vehicles</h3>
+
+<a asp-action="Create" class="btn btn-success mb-3">
+    + Add Vehicle
+</a>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Brand</th>
+            <th>Model</th>
+            <th>Year</th>
+            <th>Plate</th>
+            <th>Fuel</th>
+            <th>Odometer (km)</th>
+            <th style="width:200px;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var vehicle in Model)
+    {
+        <tr>
+            <td>@vehicle.Brand</td>
+            <td>@vehicle.Model</td>
+            <td>@vehicle.Year</td>
+            <td>@vehicle.LicensePlate</td>
+            <td>@vehicle.FuelType</td>
+            <td>@vehicle.Odometer</td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@vehicle.Id"
+                   class="btn btn-sm btn-primary">Edit</a>
+
+                <form asp-action="Delete" asp-route-id="@vehicle.Id"
+                      method="post" class="d-inline">
+                    <button class="btn btn-sm btn-danger"
+                            onclick="return confirm('Delete this vehicle?')">
+                        Delete
+                    </button>
+                </form>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

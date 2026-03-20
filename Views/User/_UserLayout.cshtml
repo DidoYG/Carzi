@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>Dashboard</title>
+    <title>User</title>
 
     <!-- Page styles -->
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
@@ -39,7 +39,7 @@
     <main class="container mt-4">
 
         <div class="position-relative mb-4">
-            <h2 class="mb-0">User Dashboard</h2>
+            <h2 class="mb-0">Welcome, @(User.Identity?.Name ?? "User")</h2>
 
             <div id="alert-container" class="position-absolute top-0 end-0" style="width: 350px;">
 
@@ -62,29 +62,29 @@
 
         <ul class="nav nav-tabs mb-4">
             <li class="nav-item">
-                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminUsers" ? "active" : "")"
-                   asp-controller="AdminUsers" asp-action="Index">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "UserDashboard" ? "active" : "")"
+                   asp-controller="UserDashboard" asp-action="Index">
                     Dashboard
                 </a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminFuels" ? "active" : "")"
-                   asp-controller="AdminFuels" asp-action="Index">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "UserVehicles" ? "active" : "")"
+                   asp-controller="UserVehicles" asp-action="Index">
                     Vehicles
                 </a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminVignettes" ? "active" : "")"
-                   asp-controller="AdminVignettes" asp-action="Index">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "UserExpenses" ? "active" : "")"
+                   asp-controller="UserExpenses" asp-action="Index">
                     Expenses
                 </a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminInspections" ? "active" : "")"
-                   asp-controller="AdminInspections" asp-action="Index">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "UserTrips" ? "active" : "")"
+                   asp-controller="UserTrips" asp-action="Index">
                     Trips
                 </a>
             </li>

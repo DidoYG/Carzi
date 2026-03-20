@@ -1,0 +1,6 @@
+@model List<Carzi.Models.Vehicle>
+@{
+    Layout = "~/Views/User/_UserLayout.cshtml";
+}
+
+@await Html.PartialAsync("_VehiclesTab", Model)

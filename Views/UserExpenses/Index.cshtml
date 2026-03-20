@@ -1,0 +1,6 @@
+@model List<Carzi.Models.FuelType>
+@{
+    Layout = "~/Views/User/_UserLayout.cshtml";
+}
+
+@await Html.PartialAsync("_ExpensesTab", Model)

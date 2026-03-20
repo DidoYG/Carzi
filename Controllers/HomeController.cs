@@ -22,27 +22,24 @@ public class HomeController : Controller
     [Authorize]
     public IActionResult Index(string? tab)
     {
-        if (User.IsInRole("Admin"))
+        if (User.Identity != null && User.Identity.IsAuthenticated)
         {
-            return RedirectToAction("Index", "Admin");
+            if (User.IsInRole("Admin"))
+                return RedirectToAction("Index", "AdminUsers");
+            else if (User.IsInRole("User"))
+                return RedirectToAction("Index", "User");
         }
 
-        var model = new TripCalculatorViewModel();
-
-        if (User.IsInRole("Guest"))
+        // GUEST VIEW (not logged in)
+        var model = new TripCalculatorViewModel
         {
-            ViewBag.ActiveTab = "tripcalc";
-
-            model.Fuels = _context.FuelTypes.ToList();
-
-            model.Vignettes = _context.VignetteTypes
+            Fuels = _context.FuelTypes.ToList(),
+            Vignettes = _context.VignetteTypes
                 .OrderBy(v => v.ValidityDays)
-                .ToList();
-        }
-        else
-        {
-            ViewBag.ActiveTab = tab ?? "dashboard";
-        }
+                .ToList()
+        };
+
+        ViewBag.ActiveTab = "tripcalc";
 
         return View(model);
     }
