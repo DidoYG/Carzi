@@ -27,7 +27,7 @@ public class HomeController : Controller
             if (User.IsInRole("Admin"))
                 return RedirectToAction("Index", "AdminUsers");
             else if (User.IsInRole("User"))
-                return RedirectToAction("Index", "User");
+                return RedirectToAction("Index", "UserDashboard");
         }
 
         // GUEST VIEW (not logged in)
@@ -40,6 +40,21 @@ public class HomeController : Controller
         };
 
         ViewBag.ActiveTab = "tripcalc";
+
+        return View(model);
+    }
+
+    [AllowAnonymous]
+    [HttpGet]
+    public IActionResult TripCalculator()
+    {
+        var model = new TripCalculatorViewModel
+        {
+            Fuels = _context.FuelTypes.ToList(),
+            Vignettes = _context.VignetteTypes
+                .OrderBy(v => v.ValidityDays)
+                .ToList()
+        };
 
         return View(model);
     }

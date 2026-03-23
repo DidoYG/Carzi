@@ -1,0 +1,12 @@
+@model Carzi.Models.ViewModels.TripCalculatorViewModel
+
+@{
+    ViewData["Title"] = "Trip Cost Calculator";
+    Layout = User.IsInRole("User")
+        ? "~/Views/User/_UserLayout.cshtml"
+        : (User.IsInRole("Admin") ? "~/Views/Admin/_AdminLayout.cshtml" : "~/Views/Shared/_Layout.cshtml");
+}
+
+<div class="content-panel">
+    @await Html.PartialAsync("_GuestTripCalc")
+</div>

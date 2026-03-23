@@ -93,7 +93,21 @@ public class UserVehiclesController : Controller
         if (!ModelState.IsValid)
         {
             ViewBag.Fuels = _context.FuelTypes.ToList();
-            return View();
+            return View(new Vehicle
+            {
+                IsCar = isCar,
+                Brand = brand,
+                Model = model,
+                Year = year,
+                Engine = engine,
+                Transmission = transmission,
+                LicensePlate = licensePlate,
+                FuelType = fuelType,
+                ConsumptionPer100Km = consumptionPer100Km,
+                Odometer = odometer,
+                PurchaseDate = purchaseDate,
+                PurchasePrice = purchasePrice
+            });
         }
 
         var vehicle = new Vehicle

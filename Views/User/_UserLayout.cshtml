@@ -88,6 +88,13 @@
                     Trips
                 </a>
             </li>
+
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")"
+                   asp-controller="Home" asp-action="TripCalculator">
+                    Trip Cost Calculator
+                </a>
+            </li>
         </ul>
 
         @RenderBody()

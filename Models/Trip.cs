@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace Carzi.Models
 {
@@ -13,6 +14,7 @@ namespace Carzi.Models
         public int VehicleId { get; set; }
 
         [ForeignKey(nameof(VehicleId))]
+        [ValidateNever]
         public Vehicle Vehicle { get; set; } = null!;
 
         // Locations
@@ -59,6 +61,7 @@ namespace Carzi.Models
         // Total trip cost
         [Required]
         [Column(TypeName = "decimal(10,2)")]
+        [DisplayFormat(DataFormatString = "{0:0.00}", ApplyFormatInEditMode = true)]
         public decimal TotalTripCost { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
