@@ -60,7 +60,14 @@ public class HomeController : Controller
     }
 
     // Privacy Policy
+    [AllowAnonymous]
     public IActionResult Privacy()
+    {
+        return View();
+    }
+
+    [AllowAnonymous]
+    public IActionResult About()
     {
         return View();
     }

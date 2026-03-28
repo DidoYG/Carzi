@@ -50,13 +50,12 @@
 
 <div class="home-container">
 
-    <!-- Welcome Title -->
-    <div class="welcome">
-        <h2 class="mb-3">Welcome, Guest</h2>
-    </div>
-
     @if (isGuestRole)
     {
+        <div class="welcome">
+            <h2 class="mb-3">Welcome, Guest</h2>
+        </div>
+        
         <div class="text-center mb-4">
             <h3 class="text-success mb-1"><strong>Trip Cost Calculator</strong></h3>
             <label class="mb-0">
