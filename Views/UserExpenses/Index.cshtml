@@ -1,6 +1,82 @@
-@model List<Carzi.Models.FuelType>
 @{
     Layout = "~/Views/User/_UserLayout.cshtml";
 }
 
-@await Html.PartialAsync("_ExpensesTab", Model)
+<style>
+    .expense-card {
+        padding: 1.2rem;
+        min-height: 160px;
+        border-radius: 12px;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .expense-card:hover {
+        transform: scale(1.03);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    }
+
+    .expense-card-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+</style>
+
+<h3>Expenses</h3>
+<p class="text-muted mb-4">Pick a category to manage your expenses.</p>
+
+<div class="row g-4 justify-content-center">
+
+    <div class="col-12 col-md-6">
+        <a asp-action="Fuels" class="text-decoration-none">
+            <div class="card expense-card h-100">
+                <div class="card-body">
+                    <div class="expense-card-title text-success">Fuels</div>
+                    <div class="text-muted small">
+                        Track fill-ups, liters, and fuel costs.
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-12 col-md-6">
+        <a asp-action="Vignettes" class="text-decoration-none">
+            <div class="card expense-card h-100">
+                <div class="card-body">
+                    <div class="expense-card-title text-success">Vignettes</div>
+                    <div class="text-muted small">
+                        Manage vignette purchases and validity.
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-12 col-md-6">
+        <a asp-action="Inspections" class="text-decoration-none">
+            <div class="card expense-card h-100">
+                <div class="card-body">
+                    <div class="expense-card-title text-success">Annual Inspections</div>
+                    <div class="text-muted small">
+                        Store inspection dates, prices, and expiry.
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-12 col-md-6">
+        <a asp-action="TplInsurances" class="text-decoration-none">
+            <div class="card expense-card h-100">
+                <div class="card-body">
+                    <div class="expense-card-title text-success">TPL Insurances</div>
+                    <div class="text-muted small">
+                        Track insurance policies and validity.
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+
+</div>

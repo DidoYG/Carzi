@@ -1,0 +1,107 @@
+@model Carzi.Models.Vignette
+@{
+    Layout = "~/Views/User/_UserLayout.cshtml";
+}
+
+<h3>Add Vignette Expense</h3>
+
+<form asp-action="VignettesCreate" method="post">
+    @Html.AntiForgeryToken()
+
+    <div class="mb-3">
+        <label class="form-label">Vehicle</label>
+        <select asp-for="VehicleId" class="form-select">
+            <option value="">-- Select Vehicle --</option>
+            @foreach (var v in ViewBag.Vehicles)
+            {
+                <option value="@v.Id">@v.Brand @v.Model (@v.LicensePlate)</option>
+            }
+        </select>
+        <span asp-validation-for="VehicleId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Vignette Type</label>
+        <select asp-for="VignetteTypeId" class="form-select" id="vignetteTypeSelect">
+            <option value="">-- Select Type --</option>
+            @foreach (var t in ViewBag.VignetteTypes)
+            {
+                <option value="@t.Id" data-days="@t.ValidityDays" data-price="@t.Price">@t.Name (€@t.Price.ToString("0.00"))</option>
+            }
+        </select>
+        <span asp-validation-for="VignetteTypeId" class="text-danger"></span>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-12 col-md-6">
+            <label asp-for="ValidFrom" class="form-label">Valid From</label>
+            <input asp-for="ValidFrom" type="date" class="form-control" id="validFromInput" />
+            <span asp-validation-for="ValidFrom" class="text-danger"></span>
+        </div>
+        <div class="col-12 col-md-6">
+            <label asp-for="ValidTo" class="form-label">Valid To</label>
+            <input asp-for="ValidTo" type="date" class="form-control" id="validToInput" />
+            <span asp-validation-for="ValidTo" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="PurchaseDate" class="form-label">Purchase Date</label>
+        <input asp-for="PurchaseDate" type="date" class="form-control" />
+        <span asp-validation-for="PurchaseDate" class="text-danger"></span>
+    </div>
+
+    <button class="btn btn-success">Create</button>
+    <a asp-action="Vignettes" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const typeSelect = document.getElementById("vignetteTypeSelect");
+            const validFrom = document.getElementById("validFromInput");
+            const validTo = document.getElementById("validToInput");
+            const priceInput = document.getElementById("priceInput");
+
+            function parseDate(value) {
+                if (!value) return null;
+                const parts = value.split("-");
+                if (parts.length !== 3) return null;
+                return new Date(parts[0], parts[1] - 1, parts[2]);
+            }
+
+            function formatDate(date) {
+                const yyyy = date.getFullYear();
+                const mm = String(date.getMonth() + 1).padStart(2, "0");
+                const dd = String(date.getDate()).padStart(2, "0");
+                return `${yyyy}-${mm}-${dd}`;
+            }
+
+            function updateFromType() {
+                if (!typeSelect) return;
+                const selected = typeSelect.options[typeSelect.selectedIndex];
+                if (!selected) return;
+
+                const daysStr = selected.getAttribute("data-days");
+                const priceStr = selected.getAttribute("data-price");
+                const days = daysStr ? parseInt(daysStr, 10) : 0;
+
+                const fromDate = parseDate(validFrom?.value);
+                if (fromDate && days > 0 && validTo) {
+                    const to = new Date(fromDate.getTime());
+                    to.setDate(to.getDate() + days);
+                    validTo.value = formatDate(to);
+                }
+
+                if (priceStr && priceInput && (!priceInput.value || parseFloat(priceInput.value) <= 0)) {
+                    priceInput.value = priceStr;
+                }
+            }
+
+            if (typeSelect) typeSelect.addEventListener("change", updateFromType);
+            if (validFrom) validFrom.addEventListener("change", updateFromType);
+        });
+    </script>
+}
+

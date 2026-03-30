@@ -1,0 +1,58 @@
+@model List<Carzi.Models.AnnualInspection>
+@{
+    Layout = "~/Views/User/_UserLayout.cshtml";
+}
+
+<div class="d-flex align-items-center justify-content-between mb-3">
+    <div>
+        <h3 class="mb-0">Annual Inspection Expenses</h3>
+        <div class="text-muted small">Inspection history for your vehicles.</div>
+    </div>
+    <div class="d-flex gap-2">
+        <a asp-action="Index" class="btn btn-outline-secondary">Back</a>
+        <a asp-action="InspectionsCreate" class="btn btn-success">+ Add Inspection</a>
+    </div>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="alert alert-info">No annual inspection expenses yet.</div>
+}
+else
+{
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Vehicle</th>
+                <th>Type</th>
+                <th>Valid Until</th>
+                <th>Odometer</th>
+                <th>Eco</th>
+                <th>Price</th>
+                <th style="width:120px;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.InspectionDate.ToString("yyyy-MM-dd")</td>
+                <td>@item.Vehicle.Brand @item.Vehicle.Model (@item.Vehicle.LicensePlate)</td>
+                <td>@item.InspectionType.Name</td>
+                <td>@item.ValidUntil.ToString("yyyy-MM-dd")</td>
+                <td>@item.Odometer</td>
+                <td>@item.EcoCategory</td>
+                <td>@item.Price.ToString("0.00") €</td>
+                <td>
+                    <form asp-action="InspectionsDelete" asp-route-id="@item.Id" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <button class="btn btn-sm btn-danger" onclick="return confirm('Delete this inspection expense?')">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+

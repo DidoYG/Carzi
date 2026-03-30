@@ -1,0 +1,56 @@
+@model List<Carzi.Models.Vignette>
+@{
+    Layout = "~/Views/User/_UserLayout.cshtml";
+}
+
+<div class="d-flex align-items-center justify-content-between mb-3">
+    <div>
+        <h3 class="mb-0">Vignette Expenses</h3>
+        <div class="text-muted small">Vignettes purchased for your vehicles.</div>
+    </div>
+    <div class="d-flex gap-2">
+        <a asp-action="Index" class="btn btn-outline-secondary">Back</a>
+        <a asp-action="VignettesCreate" class="btn btn-success">+ Add Vignette</a>
+    </div>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="alert alert-info">No vignette expenses yet.</div>
+}
+else
+{
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Purchase</th>
+                <th>Vehicle</th>
+                <th>Type</th>
+                <th>Valid From</th>
+                <th>Valid To</th>
+                <th>Price</th>
+                <th style="width:120px;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.PurchaseDate.ToString("yyyy-MM-dd")</td>
+                <td>@item.Vehicle.Brand @item.Vehicle.Model (@item.Vehicle.LicensePlate)</td>
+                <td>@item.VignetteType.Name</td>
+                <td>@item.ValidFrom.ToString("yyyy-MM-dd")</td>
+                <td>@item.ValidTo.ToString("yyyy-MM-dd")</td>
+                <td>@item.Price.ToString("0.00") €</td>
+                <td>
+                    <form asp-action="VignettesDelete" asp-route-id="@item.Id" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <button class="btn btn-sm btn-danger" onclick="return confirm('Delete this vignette expense?')">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+

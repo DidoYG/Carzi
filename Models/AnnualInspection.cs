@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace Carzi.Models
 {
@@ -12,12 +13,14 @@ namespace Carzi.Models
         public int VehicleId { get; set; }
 
         [ForeignKey(nameof(VehicleId))]
+        [ValidateNever]
         public Vehicle Vehicle { get; set; } = null!;
 
         [Required]
         public int InspectionTypeId { get; set; }
 
         [ForeignKey(nameof(InspectionTypeId))]
+        [ValidateNever]
         public AnnualInspectionType InspectionType { get; set; } = null!;
 
         [Required]
