@@ -23,14 +23,14 @@ else
     <table class="table table-bordered table-striped">
         <thead>
             <tr>
-                <th>Date</th>
+                <th>Purchase Date</th>
                 <th>Vehicle</th>
                 <th>Type</th>
                 <th>Valid Until</th>
-                <th>Odometer</th>
+                <th>Odometer (km)</th>
                 <th>Eco</th>
-                <th>Price</th>
-                <th style="width:120px;">Actions</th>
+                <th>Price (€)</th>
+                <th style="width:180px;">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -43,8 +43,9 @@ else
                 <td>@item.ValidUntil.ToString("yyyy-MM-dd")</td>
                 <td>@item.Odometer</td>
                 <td>@item.EcoCategory</td>
-                <td>@item.Price.ToString("0.00") €</td>
+                <td>@item.Price.ToString("0.00")</td>
                 <td>
+                    <a asp-action="InspectionsEdit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Edit</a>
                     <form asp-action="InspectionsDelete" asp-route-id="@item.Id" method="post" class="d-inline">
                         @Html.AntiForgeryToken()
                         <button class="btn btn-sm btn-danger" onclick="return confirm('Delete this inspection expense?')">Delete</button>
@@ -55,4 +56,3 @@ else
         </tbody>
     </table>
 }
-

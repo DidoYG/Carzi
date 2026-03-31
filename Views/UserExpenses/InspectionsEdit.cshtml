@@ -1,0 +1,86 @@
+@model Carzi.Models.AnnualInspection
+@{
+    Layout = "~/Views/User/_UserLayout.cshtml";
+}
+
+<h3>Edit Annual Inspection Expense</h3>
+
+<form asp-action="InspectionsEdit" asp-route-id="@Model.Id" method="post">
+    @Html.AntiForgeryToken()
+
+    <input asp-for="Id" type="hidden" />
+
+    <div class="mb-3">
+        <label class="form-label">Vehicle</label>
+        <select asp-for="VehicleId" class="form-select">
+            <option value="">-- Select Vehicle --</option>
+            @foreach (var v in ViewBag.Vehicles)
+            {
+                <option value="@v.Id">@v.Brand @v.Model (@v.LicensePlate)</option>
+            }
+        </select>
+        <span asp-validation-for="VehicleId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Inspection Type</label>
+        <select asp-for="InspectionTypeId" class="form-select" id="inspectionTypeSelect">
+            <option value="">-- Select Type --</option>
+            @foreach (var t in ViewBag.InspectionTypes)
+            {
+                <option value="@t.Id" data-price="@t.Price">@t.Name (€@t.Price.ToString("0.00"))</option>
+            }
+        </select>
+        <span asp-validation-for="InspectionTypeId" class="text-danger"></span>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-12 col-md-6">
+            <label asp-for="InspectionDate" class="form-label">Inspection Date</label>
+            <input asp-for="InspectionDate" type="date" class="form-control" />
+            <span asp-validation-for="InspectionDate" class="text-danger"></span>
+        </div>
+        <div class="col-12 col-md-6">
+            <label asp-for="ValidUntil" class="form-label">Valid Until</label>
+            <input asp-for="ValidUntil" type="date" class="form-control" />
+            <span asp-validation-for="ValidUntil" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row g-3 mt-0">
+        <div class="col-12 col-md-6 mt-3">
+            <label asp-for="Odometer" class="form-label">Odometer (km)</label>
+            <input asp-for="Odometer" type="number" class="form-control" />
+            <span asp-validation-for="Odometer" class="text-danger"></span>
+        </div>
+        <div class="col-12 col-md-6 mt-3">
+            <label asp-for="EcoCategory" class="form-label">Eco Category</label>
+            <input asp-for="EcoCategory" type="number" class="form-control" />
+            <span asp-validation-for="EcoCategory" class="text-danger"></span>
+        </div>
+    </div>
+    <br>
+    <button type="submit" class="btn btn-primary">Update</button>
+    <a asp-action="Inspections" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const typeSelect = document.getElementById("inspectionTypeSelect");
+            const priceInput = document.getElementById("inspectionPrice");
+
+            function updatePrice() {
+                if (!typeSelect || !priceInput) return;
+                const selected = typeSelect.options[typeSelect.selectedIndex];
+                const price = selected?.getAttribute("data-price");
+                if (price) priceInput.value = price;
+            }
+
+            if (typeSelect) typeSelect.addEventListener("change", updatePrice);
+            updatePrice();
+        });
+    </script>
+}
+

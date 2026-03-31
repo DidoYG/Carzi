@@ -27,15 +27,13 @@ public class UserExpensesController : Controller
         if (string.IsNullOrWhiteSpace(input)) return false;
 
         input = input.Trim();
-
-        // Most common user input in BG locales: "250,50"
+        
         var normalized = input.Replace(" ", "").Replace(",", ".");
         if (decimal.TryParse(normalized, NumberStyles.Number, CultureInfo.InvariantCulture, out value))
         {
             return true;
         }
 
-        // Fallback: try current culture and BG culture explicitly
         if (decimal.TryParse(input, NumberStyles.Number, CultureInfo.CurrentCulture, out value))
         {
             return true;
@@ -223,6 +221,117 @@ public class UserExpensesController : Controller
         return RedirectToAction(nameof(Fuels));
     }
 
+    [HttpGet]
+    public IActionResult FuelsEdit(int id)
+    {
+        int userId = GetUserId();
+
+        var fuel = _context.Fuels
+            .Include(f => f.Vehicle)
+            .FirstOrDefault(f => f.Id == id && f.Vehicle.UserId == userId);
+
+        if (fuel == null) return NotFound();
+
+        ViewBag.Vehicles = _context.Vehicles
+            .Where(v => v.UserId == userId)
+            .OrderBy(v => v.Brand)
+            .ThenBy(v => v.Model)
+            .ToList();
+
+        return View(fuel);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult FuelsEdit(int id, Fuel fuel)
+    {
+        int userId = GetUserId();
+
+        var existing = _context.Fuels
+            .Include(f => f.Vehicle)
+            .FirstOrDefault(f => f.Id == id && f.Vehicle.UserId == userId);
+
+        if (existing == null) return NotFound();
+
+        if (fuel.VehicleId <= 0)
+        {
+            ModelState.AddModelError(nameof(Fuel.VehicleId), "Please select a vehicle.");
+        }
+
+        var vehicle = _context.Vehicles.FirstOrDefault(v => v.Id == fuel.VehicleId && v.UserId == userId);
+
+        if (vehicle == null)
+        {
+            ModelState.AddModelError(nameof(Fuel.VehicleId), "Selected vehicle was not found.");
+        }
+        else
+        {
+            if (string.IsNullOrWhiteSpace(vehicle.FuelType))
+            {
+                ModelState.AddModelError(nameof(Fuel.VehicleId), "Selected vehicle does not have a fuel type.");
+            }
+            else
+            {
+                var fuelTypeName = vehicle.FuelType.Trim();
+
+                var fuelType = _context.FuelTypes.FirstOrDefault(f => f.Name == fuelTypeName);
+                if (fuelType == null)
+                {
+                    var lowered = fuelTypeName.ToLowerInvariant();
+                    fuelType = _context.FuelTypes.FirstOrDefault(f => f.Name.ToLower() == lowered);
+                }
+
+                if (fuelType == null)
+                {
+                    ModelState.AddModelError(nameof(Fuel.VehicleId), $"Fuel type '{fuelTypeName}' was not found.");
+                }
+                else
+                {
+                    fuel.FuelTypeId = fuelType.Id;
+
+                    // Allow overriding for old prices; auto-fill only when missing/invalid.
+                    if (fuel.PricePerLiter <= 0)
+                    {
+                        fuel.PricePerLiter = fuelType.PricePerLiter;
+                    }
+                }
+            }
+        }
+
+        if (fuel.Liters <= 0)
+        {
+            ModelState.AddModelError(nameof(Fuel.Liters), "Liters must be greater than 0.");
+        }
+
+        if (fuel.PricePerLiter <= 0)
+        {
+            ModelState.AddModelError(nameof(Fuel.PricePerLiter), "Price per liter must be greater than 0.");
+        }
+
+        if (!ModelState.IsValid)
+        {
+            ViewBag.Vehicles = _context.Vehicles
+                .Where(v => v.UserId == userId)
+                .OrderBy(v => v.Brand)
+                .ThenBy(v => v.Model)
+                .ToList();
+
+            return View(fuel);
+        }
+
+        existing.VehicleId = fuel.VehicleId;
+        existing.FuelTypeId = fuel.FuelTypeId;
+        existing.PricePerLiter = fuel.PricePerLiter;
+        existing.Liters = fuel.Liters;
+        existing.TotalCost = Math.Round(fuel.Liters * fuel.PricePerLiter, 2, MidpointRounding.AwayFromZero);
+        existing.Date = fuel.Date.Date;
+
+        _context.SaveChanges();
+
+        TempData["SuccessMessage"] = "Fuel expense updated successfully.";
+        return RedirectToAction(nameof(Fuels));
+    }
+
     // Vignette Management
     [HttpGet]
     public IActionResult Vignettes()
@@ -354,6 +463,101 @@ public class UserExpensesController : Controller
         return RedirectToAction(nameof(Vignettes));
     }
 
+    [HttpGet]
+    public IActionResult VignettesEdit(int id)
+    {
+        int userId = GetUserId();
+
+        var vignette = _context.Vignettes
+            .Include(v => v.Vehicle)
+            .FirstOrDefault(v => v.Id == id && v.Vehicle.UserId == userId);
+
+        if (vignette == null) return NotFound();
+
+        ViewBag.Vehicles = _context.Vehicles
+            .Where(v => v.UserId == userId)
+            .OrderBy(v => v.Brand)
+            .ThenBy(v => v.Model)
+            .ToList();
+
+        ViewBag.VignetteTypes = _context.VignetteTypes
+            .OrderBy(vt => vt.ValidityDays)
+            .ToList();
+
+        return View(vignette);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult VignettesEdit(int id, Vignette vignette)
+    {
+        int userId = GetUserId();
+
+        var existing = _context.Vignettes
+            .Include(v => v.Vehicle)
+            .FirstOrDefault(v => v.Id == id && v.Vehicle.UserId == userId);
+
+        if (existing == null) return NotFound();
+
+        if (vignette.VehicleId <= 0)
+        {
+            ModelState.AddModelError(nameof(Vignette.VehicleId), "Please select a vehicle.");
+        }
+
+        if (vignette.VignetteTypeId <= 0)
+        {
+            ModelState.AddModelError(nameof(Vignette.VignetteTypeId), "Please select a vignette type.");
+        }
+
+        var type = _context.VignetteTypes.FirstOrDefault(vt => vt.Id == vignette.VignetteTypeId);
+        if (type == null)
+        {
+            ModelState.AddModelError(nameof(Vignette.VignetteTypeId), "Selected vignette type was not found.");
+        }
+        else
+        {
+            vignette.Price = type.Price;
+        }
+
+        if (vignette.ValidTo < vignette.ValidFrom)
+        {
+            ModelState.AddModelError(nameof(Vignette.ValidTo), "Valid To must be after Valid From.");
+        }
+
+        var vehicle = _context.Vehicles.FirstOrDefault(v => v.Id == vignette.VehicleId && v.UserId == userId);
+        if (vehicle == null)
+        {
+            ModelState.AddModelError(nameof(Vignette.VehicleId), "Selected vehicle was not found.");
+        }
+
+        if (!ModelState.IsValid)
+        {
+            ViewBag.Vehicles = _context.Vehicles
+                .Where(v => v.UserId == userId)
+                .OrderBy(v => v.Brand)
+                .ThenBy(v => v.Model)
+                .ToList();
+
+            ViewBag.VignetteTypes = _context.VignetteTypes
+                .OrderBy(vt => vt.ValidityDays)
+                .ToList();
+
+            return View(vignette);
+        }
+
+        existing.VehicleId = vignette.VehicleId;
+        existing.VignetteTypeId = vignette.VignetteTypeId;
+        existing.PurchaseDate = vignette.PurchaseDate.Date;
+        existing.ValidFrom = vignette.ValidFrom.Date;
+        existing.ValidTo = vignette.ValidTo.Date;
+        existing.Price = Math.Round(vignette.Price, 2, MidpointRounding.AwayFromZero);
+
+        _context.SaveChanges();
+
+        TempData["SuccessMessage"] = "Vignette expense updated successfully.";
+        return RedirectToAction(nameof(Vignettes));
+    }
+
     // Annual Inspection Management
     [HttpGet]
     public IActionResult Inspections()
@@ -417,7 +621,7 @@ public class UserExpensesController : Controller
         }
         else
         {
-            inspection.Price = Math.Round(type.Price, 2); // 💥 SET FROM DB
+            inspection.Price = Math.Round(type.Price, 2);
         }
 
         if (inspection.ValidUntil < inspection.InspectionDate)
@@ -483,6 +687,102 @@ public class UserExpensesController : Controller
         return RedirectToAction(nameof(Inspections));
     }
 
+    [HttpGet]
+    public IActionResult InspectionsEdit(int id)
+    {
+        int userId = GetUserId();
+
+        var inspection = _context.AnnualInspections
+            .Include(i => i.Vehicle)
+            .FirstOrDefault(i => i.Id == id && i.Vehicle.UserId == userId);
+
+        if (inspection == null) return NotFound();
+
+        ViewBag.Vehicles = _context.Vehicles
+            .Where(v => v.UserId == userId)
+            .OrderBy(v => v.Brand)
+            .ThenBy(v => v.Model)
+            .ToList();
+
+        ViewBag.InspectionTypes = _context.AnnualInspectionTypes
+            .OrderBy(t => t.Name)
+            .ToList();
+
+        return View(inspection);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult InspectionsEdit(int id, AnnualInspection inspection)
+    {
+        int userId = GetUserId();
+
+        var existing = _context.AnnualInspections
+            .Include(i => i.Vehicle)
+            .FirstOrDefault(i => i.Id == id && i.Vehicle.UserId == userId);
+
+        if (existing == null) return NotFound();
+
+        if (inspection.VehicleId <= 0)
+        {
+            ModelState.AddModelError(nameof(AnnualInspection.VehicleId), "Please select a vehicle.");
+        }
+
+        if (inspection.InspectionTypeId <= 0)
+        {
+            ModelState.AddModelError(nameof(AnnualInspection.InspectionTypeId), "Please select an inspection type.");
+        }
+
+        var type = _context.AnnualInspectionTypes.FirstOrDefault(t => t.Id == inspection.InspectionTypeId);
+        if (type == null)
+        {
+            ModelState.AddModelError(nameof(AnnualInspection.InspectionTypeId), "Selected inspection type was not found.");
+        }
+        else
+        {
+            inspection.Price = Math.Round(type.Price, 2);
+        }
+
+        if (inspection.ValidUntil < inspection.InspectionDate)
+        {
+            ModelState.AddModelError(nameof(AnnualInspection.ValidUntil), "Valid Until must be after Inspection Date.");
+        }
+
+        var vehicle = _context.Vehicles.FirstOrDefault(v => v.Id == inspection.VehicleId && v.UserId == userId);
+        if (vehicle == null)
+        {
+            ModelState.AddModelError(nameof(AnnualInspection.VehicleId), "Selected vehicle was not found.");
+        }
+
+        if (!ModelState.IsValid)
+        {
+            ViewBag.Vehicles = _context.Vehicles
+                .Where(v => v.UserId == userId)
+                .OrderBy(v => v.Brand)
+                .ThenBy(v => v.Model)
+                .ToList();
+
+            ViewBag.InspectionTypes = _context.AnnualInspectionTypes
+                .OrderBy(t => t.Name)
+                .ToList();
+
+            return View(inspection);
+        }
+
+        existing.VehicleId = inspection.VehicleId;
+        existing.InspectionTypeId = inspection.InspectionTypeId;
+        existing.InspectionDate = inspection.InspectionDate.Date;
+        existing.ValidUntil = inspection.ValidUntil.Date;
+        existing.EcoCategory = inspection.EcoCategory;
+        existing.Odometer = inspection.Odometer;
+        existing.Price = Math.Round(inspection.Price, 2, MidpointRounding.AwayFromZero);
+
+        _context.SaveChanges();
+
+        TempData["SuccessMessage"] = "Annual inspection expense updated successfully.";
+        return RedirectToAction(nameof(Inspections));
+    }
+
     // TPL Insurances Management
     [HttpGet]
     public IActionResult TplInsurances()
@@ -525,7 +825,6 @@ public class UserExpensesController : Controller
     {
         int userId = GetUserId();
 
-        // Accept both "." and "," decimal separators even if server culture differs.
         var priceKey = nameof(TplInsurance.Price);
         if (ModelState.TryGetValue(priceKey, out var priceEntry) && priceEntry.Errors.Count > 0)
         {
@@ -614,6 +913,112 @@ public class UserExpensesController : Controller
         _context.SaveChanges();
 
         TempData["SuccessMessage"] = "TPL insurance expense deleted successfully.";
+        return RedirectToAction(nameof(TplInsurances));
+    }
+
+    [HttpGet]
+    public IActionResult TplInsurancesEdit(int id)
+    {
+        int userId = GetUserId();
+
+        var insurance = _context.TplInsurances
+            .Include(t => t.Vehicle)
+            .FirstOrDefault(t => t.Id == id && t.Vehicle.UserId == userId);
+
+        if (insurance == null) return NotFound();
+
+        ViewBag.Vehicles = _context.Vehicles
+            .Where(v => v.UserId == userId)
+            .OrderBy(v => v.Brand)
+            .ThenBy(v => v.Model)
+            .ToList();
+
+        return View(insurance);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult TplInsurancesEdit(int id, TplInsurance insurance)
+    {
+        int userId = GetUserId();
+
+        var existing = _context.TplInsurances
+            .Include(t => t.Vehicle)
+            .FirstOrDefault(t => t.Id == id && t.Vehicle.UserId == userId);
+
+        if (existing == null) return NotFound();
+
+        var priceKey = nameof(TplInsurance.Price);
+        if (ModelState.TryGetValue(priceKey, out var priceEntry) && priceEntry.Errors.Count > 0)
+        {
+            var raw = Request.Form[priceKey].ToString();
+            if (TryParseDecimalFlexible(raw, out var parsed))
+            {
+                insurance.Price = parsed;
+                ModelState.Remove(priceKey);
+            }
+        }
+
+        if (insurance.VehicleId <= 0)
+        {
+            ModelState.AddModelError(nameof(TplInsurance.VehicleId), "Please select a vehicle.");
+        }
+
+        if (string.IsNullOrWhiteSpace(insurance.ProviderName))
+        {
+            ModelState.AddModelError(nameof(TplInsurance.ProviderName), "Provider name is required.");
+        }
+
+        if (string.IsNullOrWhiteSpace(insurance.PolicyNumber))
+        {
+            ModelState.AddModelError(nameof(TplInsurance.PolicyNumber), "Policy number is required.");
+        }
+
+        if (insurance.Price <= 0)
+        {
+            ModelState.AddModelError(nameof(TplInsurance.Price), "Price must be greater than 0.");
+        }
+
+        if (insurance.EndDate < insurance.StartDate)
+        {
+            ModelState.AddModelError(nameof(TplInsurance.EndDate), "End Date must be after Start Date.");
+        }
+
+        if (string.IsNullOrWhiteSpace(insurance.PaymentType))
+        {
+            ModelState.AddModelError(nameof(TplInsurance.PaymentType), "Payment type is required.");
+        }
+
+        var vehicle = _context.Vehicles.FirstOrDefault(v => v.Id == insurance.VehicleId && v.UserId == userId);
+        if (vehicle == null)
+        {
+            ModelState.AddModelError(nameof(TplInsurance.VehicleId), "Selected vehicle was not found.");
+        }
+
+        if (!ModelState.IsValid)
+        {
+            ViewBag.Vehicles = _context.Vehicles
+                .Where(v => v.UserId == userId)
+                .OrderBy(v => v.Brand)
+                .ThenBy(v => v.Model)
+                .ToList();
+
+            return View(insurance);
+        }
+
+        existing.VehicleId = insurance.VehicleId;
+        existing.ProviderName = insurance.ProviderName.Trim();
+        existing.PolicyNumber = insurance.PolicyNumber.Trim();
+        existing.Price = Math.Round(insurance.Price, 2, MidpointRounding.AwayFromZero);
+        existing.StartDate = insurance.StartDate.Date;
+        existing.EndDate = insurance.EndDate.Date;
+        existing.PaymentType = insurance.PaymentType.Trim();
+        existing.PurchaseDate = insurance.PurchaseDate.Date;
+        existing.UpdatedAt = DateTime.UtcNow;
+
+        _context.SaveChanges();
+
+        TempData["SuccessMessage"] = "TPL insurance expense updated successfully.";
         return RedirectToAction(nameof(TplInsurances));
     }
 }

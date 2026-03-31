@@ -23,13 +23,13 @@ else
     <table class="table table-bordered table-striped">
         <thead>
             <tr>
-                <th>Date</th>
+                <th>Purchase Date</th>
                 <th>Vehicle</th>
                 <th>Fuel</th>
-                <th>Price/L</th>
+                <th>Price (€ / liter)</th>
                 <th>Liters</th>
-                <th>Total</th>
-                <th style="width:120px;">Actions</th>
+                <th>Total (€)</th>
+                <th style="width:180px;">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -39,10 +39,11 @@ else
                 <td>@item.Date.ToString("yyyy-MM-dd")</td>
                 <td>@item.Vehicle.Brand @item.Vehicle.Model (@item.Vehicle.LicensePlate)</td>
                 <td>@item.FuelType.Name</td>
-                <td>@item.PricePerLiter.ToString("0.00") €</td>
+                <td>@item.PricePerLiter.ToString("0.00")</td>
                 <td>@item.Liters.ToString("0.00")</td>
-                <td>@item.TotalCost.ToString("0.00") €</td>
+                <td>@item.TotalCost.ToString("0.00")</td>
                 <td>
+                    <a asp-action="FuelsEdit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Edit</a>
                     <form asp-action="FuelsDelete" asp-route-id="@item.Id" method="post" class="d-inline">
                         @Html.AntiForgeryToken()
                         <button class="btn btn-sm btn-danger" onclick="return confirm('Delete this fuel expense?')">Delete</button>
@@ -53,4 +54,3 @@ else
         </tbody>
     </table>
 }
-

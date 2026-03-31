@@ -23,13 +23,13 @@ else
     <table class="table table-bordered table-striped">
         <thead>
             <tr>
-                <th>Purchase</th>
+                <th>Purchase Date</th>
                 <th>Vehicle</th>
                 <th>Type</th>
                 <th>Valid From</th>
                 <th>Valid To</th>
-                <th>Price</th>
-                <th style="width:120px;">Actions</th>
+                <th>Price (€)</th>
+                <th style="width:180px;">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -41,8 +41,9 @@ else
                 <td>@item.VignetteType.Name</td>
                 <td>@item.ValidFrom.ToString("yyyy-MM-dd")</td>
                 <td>@item.ValidTo.ToString("yyyy-MM-dd")</td>
-                <td>@item.Price.ToString("0.00") €</td>
+                <td>@item.Price.ToString("0.00")</td>
                 <td>
+                    <a asp-action="VignettesEdit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Edit</a>
                     <form asp-action="VignettesDelete" asp-route-id="@item.Id" method="post" class="d-inline">
                         @Html.AntiForgeryToken()
                         <button class="btn btn-sm btn-danger" onclick="return confirm('Delete this vignette expense?')">Delete</button>
@@ -53,4 +54,3 @@ else
         </tbody>
     </table>
 }
-

@@ -3,10 +3,12 @@
     Layout = "~/Views/User/_UserLayout.cshtml";
 }
 
-<h3>Add TPL Insurance Expense</h3>
+<h3>Edit TPL Insurance Expense</h3>
 
-<form asp-action="TplInsurancesCreate" method="post">
+<form asp-action="TplInsurancesEdit" asp-route-id="@Model.Id" method="post">
     @Html.AntiForgeryToken()
+
+    <input asp-for="Id" type="hidden" />
 
     <div class="mb-3">
         <label class="form-label">Vehicle</label>
@@ -66,8 +68,8 @@
             <span asp-validation-for="Price" class="text-danger"></span>
         </div>
     </div>
-
-    <button type="submit" class="btn btn-success mt-3">Create</button>
+    <br>
+    <button type="submit" class="btn btn-primary mt-3">Update</button>
     <a asp-action="TplInsurances" class="btn btn-secondary mt-3">Cancel</a>
 </form>
 
@@ -87,3 +89,4 @@
         });
     </script>
 }
+

@@ -1,46 +1,56 @@
 @model List<Carzi.Models.Vehicle>
 
-<h3>My Vehicles</h3>
+<div class="d-flex align-items-center justify-content-between mb-3">
+    <div>
+        <h3 class="mb-0">My Vehicles</h3>
+    </div>
+    <div class="d-flex gap-2">
+        <a asp-action="Create" class="btn btn-success">+ Add Vehicle</a>
+    </div>
+</div>
 
-<a asp-action="Create" class="btn btn-success mb-3">
-    + Add Vehicle
-</a>
+@if (Model.Count == 0)
+{
+    <div class="alert alert-info">No vehicles yet.</div>
+}
+else
+{
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Brand</th>
+                <th>Model</th>
+                <th>Year</th>
+                <th>Plate</th>
+                <th>Fuel</th>
+                <th>Odometer (km)</th>
+                <th style="width:200px;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var vehicle in Model)
+        {
+            <tr>
+                <td>@vehicle.Brand</td>
+                <td>@vehicle.Model</td>
+                <td>@vehicle.Year</td>
+                <td>@vehicle.LicensePlate</td>
+                <td>@vehicle.FuelType</td>
+                <td>@vehicle.Odometer</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@vehicle.Id"
+                    class="btn btn-sm btn-primary">Edit</a>
 
-<table class="table table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>Brand</th>
-            <th>Model</th>
-            <th>Year</th>
-            <th>Plate</th>
-            <th>Fuel</th>
-            <th>Odometer (km)</th>
-            <th style="width:200px;">Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-    @foreach (var vehicle in Model)
-    {
-        <tr>
-            <td>@vehicle.Brand</td>
-            <td>@vehicle.Model</td>
-            <td>@vehicle.Year</td>
-            <td>@vehicle.LicensePlate</td>
-            <td>@vehicle.FuelType</td>
-            <td>@vehicle.Odometer</td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@vehicle.Id"
-                   class="btn btn-sm btn-primary">Edit</a>
-
-                <form asp-action="Delete" asp-route-id="@vehicle.Id"
-                      method="post" class="d-inline">
-                    <button class="btn btn-sm btn-danger"
-                            onclick="return confirm('Delete this vehicle?')">
-                        Delete
-                    </button>
-                </form>
-            </td>
-        </tr>
-    }
-    </tbody>
-</table>
+                    <form asp-action="Delete" asp-route-id="@vehicle.Id"
+                        method="post" class="d-inline">
+                        <button class="btn btn-sm btn-danger"
+                                onclick="return confirm('Delete this vehicle?')">
+                            Delete
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
