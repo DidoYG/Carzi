@@ -25,14 +25,15 @@
             <td>@user.Role</td>
             <td>@user.CreatedAt.ToShortDateString()</td>
             <td>
-                <a asp-action="Edit" asp-route-id="@user.Id"
-                   class="btn btn-sm btn-primary">Edit</a>
-
-                <a asp-action="ResetPassword" asp-route-id="@user.Id"
-                   class="btn btn-sm btn-warning">Password</a>
 
                 @if (User.Identity?.Name != user.Username)
                 {
+                    <a asp-action="Edit" asp-route-id="@user.Id"
+                        class="btn btn-sm btn-primary">Edit</a>
+
+                    <a asp-action="ResetPassword" asp-route-id="@user.Id"
+                        class="btn btn-sm btn-warning">Password</a>
+                   
                     <form asp-action="Delete" asp-route-id="@user.Id"
                           method="post" class="d-inline">
                         <button class="btn btn-sm btn-danger"

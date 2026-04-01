@@ -1,0 +1,23 @@
+@{
+    ViewData["Title"] = "Reset Password";
+    Layout = "~/Views/User/_UserLayout.cshtml";
+}
+
+<div class="row">
+    <div class="col-lg-6">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h4 class="card-title mb-1">Profile</h4>
+                <div class="text-muted mb-3">Manage your account settings.</div>
+                <div class="mb-2"><strong>Username:</strong> @ViewBag.Username</div>
+                <div class="mb-3"><strong>Email:</strong> @ViewBag.Email</div>
+
+                <div class="d-flex gap-2">
+                    <a class="btn btn-outline-primary" asp-controller="Profile" asp-action="ChangeUsername">Change username</a>
+                    <a class="btn btn-outline-success" asp-controller="Profile" asp-action="ResetPassword">Reset password</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

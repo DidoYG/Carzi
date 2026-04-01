@@ -16,8 +16,8 @@
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                <ul class="navbar-nav">
+            <div class="navbar-collapse collapse d-sm-inline-flex">
+                <ul class="navbar-nav me-auto">
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                     </li>
@@ -27,12 +27,22 @@
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="About">About</a>
                     </li>
+                </ul>
+
+                <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link text-danger"
-                        asp-controller="Auth"
-                        asp-action="Logout">
-                            Logout
-                        </a>
+                        <a class="nav-link text-success" asp-controller="Profile" asp-action="Index">Profile</a>
+                    </li>
+                    <li class="nav-item ms-2">
+                        <form asp-controller="Auth"
+                              asp-action="Logout"
+                              method="post"
+                              class="d-inline">
+                            <button type="submit"
+                                    class="nav-link btn btn-link text-danger p-0 pt-2">
+                                Logout
+                            </button>
+                        </form>
                     </li>
                 </ul>
             </div>

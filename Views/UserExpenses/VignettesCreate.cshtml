@@ -44,7 +44,7 @@
             <span asp-validation-for="ValidTo" class="text-danger"></span>
         </div>
     </div>
-
+    <br>
     <div class="mb-3">
         <label asp-for="PurchaseDate" class="form-label">Purchase Date</label>
         <input asp-for="PurchaseDate" type="date" class="form-control" />
@@ -62,6 +62,7 @@
             const typeSelect = document.getElementById("vignetteTypeSelect");
             const validFrom = document.getElementById("validFromInput");
             const validTo = document.getElementById("validToInput");
+            const purchaseDate = document.querySelector('input[name="PurchaseDate"]');
             const priceInput = document.getElementById("priceInput");
 
             function parseDate(value) {
@@ -94,6 +95,12 @@
                     validTo.value = formatDate(to);
                 }
 
+                const purchase = parseDate(purchaseDate?.value);
+
+                if (fromDate && purchase && fromDate < purchase) {
+                    purchaseDate.value = formatDate(fromDate);
+                }
+
                 if (priceStr && priceInput && (!priceInput.value || parseFloat(priceInput.value) <= 0)) {
                     priceInput.value = priceStr;
                 }
@@ -104,4 +111,3 @@
         });
     </script>
 }
-
