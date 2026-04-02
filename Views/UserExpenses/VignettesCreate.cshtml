@@ -32,6 +32,12 @@
         <span asp-validation-for="VignetteTypeId" class="text-danger"></span>
     </div>
 
+    <div class="mb-3">
+        <label asp-for="PurchaseDate" class="form-label">Purchase Date</label>
+        <input asp-for="PurchaseDate" type="date" class="form-control" />
+        <span asp-validation-for="PurchaseDate" class="text-danger"></span>
+    </div>
+
     <div class="row g-3">
         <div class="col-12 col-md-6">
             <label asp-for="ValidFrom" class="form-label">Valid From</label>
@@ -45,12 +51,6 @@
         </div>
     </div>
     <br>
-    <div class="mb-3">
-        <label asp-for="PurchaseDate" class="form-label">Purchase Date</label>
-        <input asp-for="PurchaseDate" type="date" class="form-control" />
-        <span asp-validation-for="PurchaseDate" class="text-danger"></span>
-    </div>
-
     <button class="btn btn-success">Create</button>
     <a asp-action="Vignettes" class="btn btn-secondary">Cancel</a>
 </form>

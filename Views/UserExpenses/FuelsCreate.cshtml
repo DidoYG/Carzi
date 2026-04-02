@@ -1,6 +1,8 @@
 @model Carzi.Models.Fuel
 @{
     Layout = "~/Views/User/_UserLayout.cshtml";
+    string year = DateTime.Now.ToString("yyyy");
+    string month = DateTime.Now.ToString("MM");
 }
 
 <h3>Add Fuel Expense</h3>
@@ -28,7 +30,7 @@
     <div class="mb-3">
         <label asp-for="PricePerLiter" class="form-label">
                 Price (€ / liter)
-                <a class="ms-2 small" href="https://fuelo.net/calendar/month/2026/03?lang=en" target="_blank" rel="noopener noreferrer">
+                <a class="ms-2 small" href="https://fuelo.net/calendar/month/@year/@month?lang=en" target="_blank" rel="noopener noreferrer">
                     for old prices
                 </a>
             </label>

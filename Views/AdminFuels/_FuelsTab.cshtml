@@ -13,7 +13,9 @@
         </button>
     </form>
 
-    <a href="https://fuelo.net/prices/date/2026-03-30?lang=en"
+    @{ string date = DateTime.Now.ToString("yyyy-MM-dd"); }
+
+    <a href="https://fuelo.net/prices/date/@date?lang=en"
        target="_blank"
        rel="noopener noreferrer"
        class="btn btn-secondary">

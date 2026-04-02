@@ -1,1 +1,284 @@
-<h3>User Dashboard</h3>
+@model Carzi.Models.ViewModels.UserDashboardViewModel
+@using Carzi.Models.ViewModels
+
+<style>
+    .expense-card {
+        padding: 1.2rem;
+        min-height: 160px;
+        border-radius: 12px;
+        border: 1px solid #adb5bd;
+    }
+
+    .expense-card-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+</style>
+
+@functions {
+    private static string StatusBadgeClass(ExpiryStatus status) => status switch
+    {
+        ExpiryStatus.AllValid => "bg-success",
+        ExpiryStatus.ExpiresToday => "bg-warning text-dark",
+        ExpiryStatus.Expired => "bg-danger",
+        _ => "bg-secondary"
+    };
+
+    private static string StatusLabel(ExpiryStatus status) => status switch
+    {
+        ExpiryStatus.AllValid => "Valid",
+        ExpiryStatus.ExpiresToday => "Expires today",
+        ExpiryStatus.Expired => "Expired",
+        _ => "Missing"
+    };
+}
+
+<h3>Overview</h3>
+
+@if (Model.Notifications.Count > 0)
+{
+    var danger = Model.Notifications.Where(n => n.Severity == "danger").ToList();
+    var warning = Model.Notifications.Where(n => n.Severity != "danger").ToList();
+
+    if (danger.Count > 0)
+    {
+        <div class="alert alert-danger">
+            <div class="fw-semibold mb-2">Expired</div>
+            <ul class="mb-0">
+                @foreach (var n in danger)
+                {
+                    <li>
+                        @if (!string.IsNullOrWhiteSpace(n.Controller) && !string.IsNullOrWhiteSpace(n.Action))
+                        {
+                            <a asp-controller="@n.Controller" asp-action="@n.Action" class="text-decoration-none">
+                                @n.Message
+                            </a>
+                        }
+                        else
+                        {
+                            @n.Message
+                        }
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+
+    if (warning.Count > 0)
+    {
+        <div class="alert alert-warning">
+            <div class="fw-semibold mb-2">Expires today (@DateTime.Today.ToShortDateString())</div>
+            <ul class="mb-0">
+                @foreach (var n in warning)
+                {
+                    <li>
+                        @if (!string.IsNullOrWhiteSpace(n.Controller) && !string.IsNullOrWhiteSpace(n.Action))
+                        {
+                            <a asp-controller="@n.Controller" asp-action="@n.Action" class="text-decoration-none">
+                                @n.Message
+                            </a>
+                        }
+                        else
+                        {
+                            @n.Message
+                        }
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+}
+
+<div class="row g-3 mb-4">
+    <div class="col-12 col-lg-4">
+        <div class="card expense-card h-100">
+            <div class="card-body">
+                <div class="text-semibold">Vehicles Owned</div>
+                <div class="display-6 fw-semibold mb-1">@Model.VehicleCount</div>
+                <a asp-controller="UserVehicles" asp-action="Index" class="small text-decoration-none">
+                    View vehicles
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-8">
+        <div class="card expense-card h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <div class="fw-semibold">Vignettes</div>
+                    <span class="badge @StatusBadgeClass(Model.VignetteSummary.Status)">
+                        @StatusLabel(Model.VignetteSummary.Status)
+                    </span>
+                </div>
+
+                <div class="fs-5">@Model.VignetteSummary.Message</div>
+                <div class="text-muted small mt-2">
+                    Valid: @Model.VignetteSummary.ValidCount •
+                    Expires today: @Model.VignetteSummary.ExpiresTodayCount •
+                    Expired: @Model.VignetteSummary.ExpiredCount •
+                    Missing: @Model.VignetteSummary.MissingCount
+                </div>
+
+                <div class="mt-2">
+                    <a asp-controller="UserExpenses" asp-action="Vignettes" class="small text-decoration-none">
+                        View vignettes
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-6">
+        <div class="card expense-card h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <div class="fw-semibold">Annual Inspections</div>
+                    <span class="badge @StatusBadgeClass(Model.InspectionSummary.Status)">
+                        @StatusLabel(Model.InspectionSummary.Status)
+                    </span>
+                </div>
+
+                <div class="fs-5">@Model.InspectionSummary.Message</div>
+                <div class="text-muted small mt-2">
+                    Valid: @Model.InspectionSummary.ValidCount •
+                    Expires today: @Model.InspectionSummary.ExpiresTodayCount •
+                    Expired: @Model.InspectionSummary.ExpiredCount •
+                    Missing: @Model.InspectionSummary.MissingCount
+                </div>
+
+                <div class="mt-2">
+                    <a asp-controller="UserExpenses" asp-action="Inspections" class="small text-decoration-none">
+                        View inspections
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-6">
+        <div class="card expense-card h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <div class="fw-semibold">TPL Insurances</div>
+                    <span class="badge @StatusBadgeClass(Model.TplSummary.Status)">
+                        @StatusLabel(Model.TplSummary.Status)
+                    </span>
+                </div>
+
+                <div class="fs-5">@Model.TplSummary.Message</div>
+                <div class="text-muted small mt-2">
+                    Valid: @Model.TplSummary.ValidCount •
+                    Expires today: @Model.TplSummary.ExpiresTodayCount •
+                    Expired: @Model.TplSummary.ExpiredCount •
+                    Missing: @Model.TplSummary.MissingCount
+                </div>
+
+                <div class="mt-2">
+                    <a asp-controller="UserExpenses" asp-action="TplInsurances" class="small text-decoration-none">
+                        View TPL insurances
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex align-items-center justify-content-between mb-2">
+    <h4 class="mb-0">Expense price tables</h4>
+</div>
+
+<div class="row g-3">
+    <div class="col-12 col-lg-4">
+        <div class="card expense-card h-100">
+            <div class="card-body">
+                <div class="fw-semibold mb-2">Fuels</div>
+
+                <div class="table-responsive">
+                    <table class="table table-sm table-striped align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th class="text-end">€ / liter</th>
+                                <th class="text-end">Updated</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var fuel in Model.PriceTables.FuelTypes)
+                            {
+                                <tr>
+                                    <td>@fuel.Name</td>
+                                    <td class="text-end">@fuel.PricePerLiter.ToString("F2")</td>
+                                    <td class="text-end">@fuel.UpdatedAt.ToShortDateString()</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+        <div class="card expense-card h-100">
+            <div class="card-body">
+                <div class="fw-semibold mb-2">Vignettes</div>
+
+                <div class="table-responsive">
+                    <table class="table table-sm table-striped align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th class="text-end">Days</th>
+                                <th class="text-end">€</th>
+                                <th class="text-end">Updated</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var vt in Model.PriceTables.VignetteTypes)
+                            {
+                                <tr>
+                                    <td>@vt.Name</td>
+                                    <td class="text-end">@vt.ValidityDays</td>
+                                    <td class="text-end">@vt.Price.ToString("F2")</td>
+                                    <td class="text-end">@vt.UpdatedAt.ToShortDateString()</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+        <div class="card expense-card h-100">
+            <div class="card-body">
+                <div class="fw-semibold mb-2">Annual Inspections</div>
+
+                <div class="table-responsive">
+                    <table class="table table-sm table-striped align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th class="text-end">€</th>
+                                <th class="text-end">Updated</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var it in Model.PriceTables.AnnualInspectionTypes)
+                            {
+                                <tr>
+                                    <td>@it.Name</td>
+                                    <td class="text-end">@it.Price.ToString("F2")</td>
+                                    <td class="text-end">@it.UpdatedAt.ToShortDateString()</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
