@@ -114,6 +114,8 @@ public class UserDashboardController : Controller
             .ThenBy(v => v.Model)
             .ToList();
 
+        var vehicleIds = vehicles.Select(v => v.Id).ToList();
+
         var vignettes = _context.Vignettes
             .AsNoTracking()
             .Include(v => v.Vehicle)
@@ -158,10 +160,11 @@ public class UserDashboardController : Controller
             TplSummary = BuildSummary("TPL Insurance", vehicles, latestTplEnd, "TPL insurance", "All TPL insurances valid"),
             PriceTables = new DashboardPriceTablesViewModel
             {
-                FuelTypes = _context.FuelTypes.AsNoTracking().ToList(),
+                FuelTypes = _context.FuelTypes.AsNoTracking().OrderBy(f => f.Name).ToList(),
                 VignetteTypes = _context.VignetteTypes.AsNoTracking().OrderBy(vt => vt.ValidityDays).ToList(),
                 AnnualInspectionTypes = _context.AnnualInspectionTypes.AsNoTracking().OrderBy(t => t.Name).ToList(),
-            }
+            },
+            CostAggregates = BuildCostAggregates(vehicles, vehicleIds)
         };
 
         foreach (var vehicle in vehicles)
@@ -244,5 +247,78 @@ public class UserDashboardController : Controller
             .ThenBy(n => n.Message)
             .ToList();
         return View(model);
+    }
+
+    private DashboardCostAggregatesViewModel BuildCostAggregates(
+        IReadOnlyList<Vehicle> vehicles,
+        IReadOnlyList<int> vehicleIds)
+    {
+        var aggregates = new DashboardCostAggregatesViewModel
+        {
+            TotalVehiclePurchaseCost = vehicles.Sum(v => v.PurchasePrice),
+            TotalOdometerKm = vehicles.Where(v => v.Odometer > 0).Sum(v => v.Odometer)
+        };
+
+        if (vehicleIds.Count == 0) return aggregates;
+
+        // SQLite provider cannot translate Sum() over decimal reliably; do aggregation in-memory.
+        var fuelTotalsByVehicle = _context.Fuels
+            .AsNoTracking()
+            .Where(f => vehicleIds.Contains(f.VehicleId))
+            .Select(f => new { f.VehicleId, f.TotalCost })
+            .ToList()
+            .GroupBy(x => x.VehicleId)
+            .ToDictionary(g => g.Key, g => g.Sum(x => x.TotalCost));
+
+        var vignetteTotalsByVehicle = _context.Vignettes
+            .AsNoTracking()
+            .Where(v => vehicleIds.Contains(v.VehicleId))
+            .Select(v => new { v.VehicleId, v.Price })
+            .ToList()
+            .GroupBy(x => x.VehicleId)
+            .ToDictionary(g => g.Key, g => g.Sum(x => x.Price));
+
+        var inspectionTotalsByVehicle = _context.AnnualInspections
+            .AsNoTracking()
+            .Where(i => vehicleIds.Contains(i.VehicleId))
+            .Select(i => new { i.VehicleId, i.Price })
+            .ToList()
+            .GroupBy(x => x.VehicleId)
+            .ToDictionary(g => g.Key, g => g.Sum(x => x.Price));
+
+        var tplTotalsByVehicle = _context.TplInsurances
+            .AsNoTracking()
+            .Where(t => vehicleIds.Contains(t.VehicleId))
+            .Select(t => new { t.VehicleId, t.Price })
+            .ToList()
+            .GroupBy(x => x.VehicleId)
+            .ToDictionary(g => g.Key, g => g.Sum(x => x.Price));
+
+        aggregates.TotalFuelCost = fuelTotalsByVehicle.Values.Sum();
+        aggregates.TotalVignetteCost = vignetteTotalsByVehicle.Values.Sum();
+        aggregates.TotalInspectionCost = inspectionTotalsByVehicle.Values.Sum();
+        aggregates.TotalTplCost = tplTotalsByVehicle.Values.Sum();
+
+        aggregates.PerVehicle = vehicles.Select(v =>
+        {
+            fuelTotalsByVehicle.TryGetValue(v.Id, out var fuelTotal);
+            vignetteTotalsByVehicle.TryGetValue(v.Id, out var vignetteTotal);
+            inspectionTotalsByVehicle.TryGetValue(v.Id, out var inspectionTotal);
+            tplTotalsByVehicle.TryGetValue(v.Id, out var tplTotal);
+
+            return new VehicleCostSummaryViewModel
+            {
+                VehicleId = v.Id,
+                VehicleLabel = VehicleLabel(v),
+                OdometerKm = v.Odometer,
+                PurchasePrice = v.PurchasePrice,
+                FuelTotal = fuelTotal,
+                VignetteTotal = vignetteTotal,
+                InspectionTotal = inspectionTotal,
+                TplTotal = tplTotal
+            };
+        }).ToList();
+
+        return aggregates;
     }
 }

@@ -185,8 +185,101 @@
     </div>
 </div>
 
+<div class="d-flex align-items-center justify-content-between mt-4 mb-2">
+    <h3 class="mb-0">Cost summaries</h3>
+</div>
+
+<div class="card expense-card h-100 mb-4">
+    <div class="card-body">
+        <div class="fw-semibold mb-2">Per-vehicle totals</div>
+
+        <div class="table-responsive">
+            <table class="table table-sm table-striped align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Vehicle</th>
+                        <th class="text-end">Purchase (€)</th>
+                        <th class="text-end">Fuel (€)</th>
+                        <th class="text-end">Vignette (€)</th>
+                        <th class="text-end">Inspection (€)</th>
+                        <th class="text-end">TPL (€)</th>
+                        <th class="text-end">Total (€)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var v in Model.CostAggregates.PerVehicle)
+                    {
+                        <tr>
+                            <td>@v.VehicleLabel</td>
+                            <td class="text-end">@v.PurchasePrice.ToString("F2")</td>
+                            <td class="text-end">@v.FuelTotal.ToString("F2")</td>
+                            <td class="text-end">@v.VignetteTotal.ToString("F2")</td>
+                            <td class="text-end">@v.InspectionTotal.ToString("F2")</td>
+                            <td class="text-end">@v.TplTotal.ToString("F2")</td>
+                            <td class="text-end fw-semibold">@v.Total.ToString("F2")</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th class="text-end" colspan="1">Totals:</th>
+                        <th class="text-end">€@Model.CostAggregates.TotalVehiclePurchaseCost.ToString("F2")</th>
+                        <th class="text-end">€@Model.CostAggregates.TotalFuelCost.ToString("F2")</th>
+                        <th class="text-end">€@Model.CostAggregates.TotalVignetteCost.ToString("F2")</th>
+                        <th class="text-end">€@Model.CostAggregates.TotalInspectionCost.ToString("F2")</th>
+                        <th class="text-end">€@Model.CostAggregates.TotalTplCost.ToString("F2")</th>
+                        <th class="text-end">€@Model.CostAggregates.GrandTotal.ToString("F2")</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="card expense-card h-100 mb-4">
+    <div class="card-body">
+        <div class="fw-semibold mb-2">€ / 100 km (total / odometer)</div>
+
+        <div class="table-responsive">
+            <table class="table table-sm table-striped align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Vehicle</th>
+                        <th class="text-end">Total (€)</th>
+                        <th class="text-end">Odometer (km)</th>
+                        <th class="text-end">€ / 100 km</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var v in Model.CostAggregates.PerVehicle)
+                    {
+                        <tr>
+                            <td>@v.VehicleLabel</td>
+                            <td class="text-end">@v.Total.ToString("F2")</td>
+                            <td class="text-end">@v.OdometerKm</td>
+                            <td class="text-end">
+                                @(v.CostPer100Km.HasValue ? v.CostPer100Km.Value.ToString("F2") : "N/A")
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th class="text-end" colspan="1">Grand Total:</th>
+                        <th class="text-end">€@Model.CostAggregates.GrandTotal.ToString("F2")</th>
+                        <th class="text-end">@Model.CostAggregates.TotalOdometerKm</th>
+                        <th class="text-end">
+                            @(Model.CostAggregates.GrandTotalCostPer100Km.HasValue ? $"€{Model.CostAggregates.GrandTotalCostPer100Km.Value:F2}" : "N/A")
+                        </th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
 <div class="d-flex align-items-center justify-content-between mb-2">
-    <h4 class="mb-0">Expense price tables</h4>
+    <h3 class="mb-0">Expense price tables</h3>
 </div>
 
 <div class="row g-3">
