@@ -32,21 +32,3 @@ body {
     display: flex;
     align-items: center;
 }
-
-.expense-card {
-    border: 1px solid rgba(0,0,0,.08);
-    transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
-}
-
-.expense-card:hover {
-    transform: translateY(-2px);
-    border-color: rgba(13,110,253,.35);
-    box-shadow: 0 10px 20px rgba(0,0,0,.08);
-}
-
-.expense-card-title {
-    font-weight: 700;
-    font-size: 1.05rem;
-    margin-bottom: .25rem;
-    color: #111;
-}

@@ -3,12 +3,27 @@
     var version = typeof(Carzi.Controllers.HomeController).Assembly.GetName().Version?.ToString() ?? "unknown";
 }
 
+<style>
+    .app-card {
+        padding: 1.2rem;
+        min-height: 160px;
+        border-radius: 12px;
+        border: 1px solid #adb5bd;
+    }
+
+    .app-card-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+</style>
+
 <div class="row justify-content-center">
     <div class="col-lg-10 col-xl-8">
         <h1 class="mb-3">@ViewData["Title"]</h1>
         <p class="text-muted">Carzi v@version</p>
 
-        <div class="card mb-3">
+        <div class="card app-card mb-3">
             <div class="card-body">
                 <h2 class="h5">What is Carzi?</h2>
                 <p class="mb-0">
@@ -18,7 +33,7 @@
             </div>
         </div>
 
-        <div class="card mb-3">
+        <div class="card app-card mb-3">
             <div class="card-body">
                 <h2 class="h5">Key Features</h2>
                 <ul class="mb-0">
@@ -30,7 +45,7 @@
             </div>
         </div>
 
-        <div class="card">
+        <div class="card app-card mb-3">
             <div class="card-body">
                 <h2 class="h5">Get in touch</h2>
                 <p class="mb-0">
