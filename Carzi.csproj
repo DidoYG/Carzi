@@ -15,4 +15,16 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="Carzi.Tests\**\*.cs" />
+    <Compile Remove="bin\**\*.cs" />
+    <Compile Remove="obj\**\*.cs" />
+    <Content Remove="Carzi.Tests\**\*" />
+    <Content Remove="bin\**\*" />
+    <Content Remove="obj\**\*" />
+    <None Remove="Carzi.Tests\**\*" />
+    <None Remove="bin\**\*" />
+    <None Remove="obj\**\*" />
+  </ItemGroup>
+
 </Project>

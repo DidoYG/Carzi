@@ -160,7 +160,7 @@ public class UserDashboardController : Controller
             TplSummary = BuildSummary("TPL Insurance", vehicles, latestTplEnd, "TPL insurance", "All TPL insurances valid"),
             PriceTables = new DashboardPriceTablesViewModel
             {
-                FuelTypes = _context.FuelTypes.AsNoTracking().OrderBy(f => f.Name).ToList(),
+                FuelTypes = _context.FuelTypes.AsNoTracking().ToList(),
                 VignetteTypes = _context.VignetteTypes.AsNoTracking().OrderBy(vt => vt.ValidityDays).ToList(),
                 AnnualInspectionTypes = _context.AnnualInspectionTypes.AsNoTracking().OrderBy(t => t.Name).ToList(),
             },
@@ -261,7 +261,6 @@ public class UserDashboardController : Controller
 
         if (vehicleIds.Count == 0) return aggregates;
 
-        // SQLite provider cannot translate Sum() over decimal reliably; do aggregation in-memory.
         var fuelTotalsByVehicle = _context.Fuels
             .AsNoTracking()
             .Where(f => vehicleIds.Contains(f.VehicleId))
