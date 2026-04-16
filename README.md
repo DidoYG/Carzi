@@ -1,22 +1,88 @@
 # Carzi
 
-Carzi is a web-based vehicle cost tracking system developed as part of an INF Senior Project.
+Carzi is an ASP.NET Core MVC web app for tracking vehicles, trips, and vehicle-related costs (fuel fill-ups and mandatory expenses like vignettes, inspections, and TPL insurances).
 
-## Project Overview
+## Tech Stack
 
-The goal of Carzi is to help users track and analyze the costs associated with vehicle ownership and usage.  
-The system allows users to register vehicles, record trips, monitor fuel consumption, and manage mandatory vehicle-related expenses such as insurance, road vignettes, and annual inspections.
+- Language: **C#**
+- Runtime/Framework: **.NET (`net10.0`)**
+- Web: **ASP.NET Core MVC** + **Razor Views**
+- Data: **Entity Framework Core** + **SQLite**
+- UI: **Bootstrap**, **jQuery**
+- Auth: **Cookie authentication** + **role-based authorization**
+- Tests: **xUnit**
 
-The application supports:
-- Guest users for one-time calculations
-- Registered users with persistent data
-- Admin users for managing the information
+## Features
 
-## Technologies Used
+### Guest mode
 
-- **C#**
-- **ASP.NET Core MVC**
-- **Entity Framework Core**
-- **SQLite**
-- **Razor Views**
-- **Cookie-based Authentication**
+- Trip cost calculator (fuel + optional temporary vignette cost).
+- Uses the database tables for fuel types and vignette types.
+
+### User mode
+
+- Vehicles: create/edit/delete vehicles (fuel type, consumption, odometer, purchase info).
+- Trips: calculate and save trip cost (needed fuel, fuel cost, optional vignette cost).
+- Expenses:
+  - Fuel logs (liters × price per liter = total)
+  - Vignettes (validity period + cost)
+  - Annual inspections (valid-until + cost)
+  - TPL insurance (policy details + start/end + cost)
+- Dashboard:
+  - Expiry summaries per vehicle (expired / expires today / missing / valid)
+  - Cost aggregates across vehicles
+  - Notifications for expiring/expired items
+
+### Admin mode
+
+- Manage users and roles (`Admin`, `User`).
+- Manage vehicle expenses (fuel types, vignette types, annual inspection types).
+- Update fuel prices from the Fuelo API.
+
+## Getting Started
+
+### Prerequisites
+
+- .NET SDK that supports `net10.0`
+
+### Run locally
+
+```bash
+dotnet restore
+dotnet run
+```
+
+### Database (SQLite + EF Core)
+
+To create/update the database from migrations:
+
+```bash
+dotnet ef database update
+```
+
+Note: Admin-only pages require an `Admin` user. New registrations default to `User`, so for a fresh database you’ll need to promote a user to `Admin` (for example by updating the `Users.Role` field in SQLite).
+
+## Configuration
+
+### Fuel prices (Fuelo)
+
+Admin can update fuel prices from Fuelo. Configure the API key in `appsettings.json`:
+
+- `Fuelo:ApiKey`
+
+If the key is missing/invalid, the update operation will simply skip failed requests.
+
+## Tests
+
+```bash
+dotnet test
+```
+
+## Project Structure
+
+- `Program.cs` — app startup, auth, routing
+- `Controllers/` — MVC controllers (guest, user, admin)
+- `Models/` — EF Core entities and view models
+- `Data/ApplicationDbContext.cs` — EF Core context
+- `Views/` — Razor views
+- `wwwroot/` — static assets (Bootstrap/jQuery, CSS, JS)
