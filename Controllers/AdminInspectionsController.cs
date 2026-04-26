@@ -31,26 +31,22 @@ public class AdminInspectionsController : Controller
     }
 
     [HttpPost]
-    public IActionResult Create(string name, decimal price)
+    [ValidateAntiForgeryToken]
+    public IActionResult Create(AnnualInspectionType inspectionType)
     {
-        if (string.IsNullOrWhiteSpace(name))
+        if (!string.IsNullOrWhiteSpace(inspectionType.Name) &&
+            _context.AnnualInspectionTypes.Any(i => i.Name == inspectionType.Name))
         {
-            ModelState.AddModelError("", "Name is required.");
-            return View();
+            ModelState.AddModelError(nameof(AnnualInspectionType.Name), "Inspection type already exists.");
         }
 
-        if (_context.AnnualInspectionTypes.Any(i => i.Name == name))
+        if (!ModelState.IsValid)
         {
-            ModelState.AddModelError("", "Inspection type already exists.");
-            return View();
+            return View(inspectionType);
         }
 
-        _context.AnnualInspectionTypes.Add(new AnnualInspectionType
-        {
-            Name = name,
-            Price = price,
-            UpdatedAt = DateTime.UtcNow
-        });
+        inspectionType.UpdatedAt = DateTime.UtcNow;
+        _context.AnnualInspectionTypes.Add(inspectionType);
 
         _context.SaveChanges();
 
@@ -69,26 +65,26 @@ public class AdminInspectionsController : Controller
     }
 
     [HttpPost]
-    public IActionResult Edit(int id, string name, decimal price)
+    [ValidateAntiForgeryToken]
+    public IActionResult Edit(AnnualInspectionType inspectionType)
     {
-        var inspection = _context.AnnualInspectionTypes.Find(id);
-        if (inspection == null) return NotFound();
+        var existing = _context.AnnualInspectionTypes.Find(inspectionType.Id);
+        if (existing == null) return NotFound();
 
-        if (string.IsNullOrWhiteSpace(name))
+        if (!string.IsNullOrWhiteSpace(inspectionType.Name) &&
+            _context.AnnualInspectionTypes.Any(i => i.Name == inspectionType.Name && i.Id != inspectionType.Id))
         {
-            ModelState.AddModelError("", "Name is required.");
-            return View(inspection);
+            ModelState.AddModelError(nameof(AnnualInspectionType.Name), "Inspection type already exists.");
         }
 
-        if (_context.AnnualInspectionTypes.Any(i => i.Name == name && i.Id != id))
+        if (!ModelState.IsValid)
         {
-            ModelState.AddModelError("", "Inspection type already exists.");
-            return View(inspection);
+            return View(inspectionType);
         }
 
-        inspection.Name = name;
-        inspection.Price = price;
-        inspection.UpdatedAt = DateTime.UtcNow;
+        existing.Name = inspectionType.Name;
+        existing.Price = inspectionType.Price;
+        existing.UpdatedAt = DateTime.UtcNow;
 
         _context.SaveChanges();
 
@@ -98,6 +94,7 @@ public class AdminInspectionsController : Controller
 
     // Delete an inspection type
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public IActionResult Delete(int id)
     {
         var inspection = _context.AnnualInspectionTypes.Find(id);

@@ -31,27 +31,21 @@ public class AdminVignettesController : Controller
     }
 
     [HttpPost]
-    public IActionResult Create(string name, int validityDays, decimal price)
+    [ValidateAntiForgeryToken]
+    public IActionResult Create(VignetteType vignette)
     {
-        if (string.IsNullOrWhiteSpace(name))
+        if (!string.IsNullOrWhiteSpace(vignette.Name) &&
+            _context.VignetteTypes.Any(v => v.Name == vignette.Name))
         {
-            ModelState.AddModelError("", "Name is required.");
-            return View();
+            ModelState.AddModelError(nameof(VignetteType.Name), "Vignette already exists.");
         }
 
-        if (_context.VignetteTypes.Any(v => v.Name == name))
+        if (!ModelState.IsValid)
         {
-            ModelState.AddModelError("", "Vignette already exists.");
-            return View();
+            return View(vignette);
         }
 
-        var vignette = new VignetteType
-        {
-            Name = name,
-            ValidityDays = validityDays,
-            Price = price,
-            UpdatedAt = DateTime.UtcNow
-        };
+        vignette.UpdatedAt = DateTime.UtcNow;
 
         _context.VignetteTypes.Add(vignette);
         _context.SaveChanges();
@@ -71,27 +65,27 @@ public class AdminVignettesController : Controller
     }
 
     [HttpPost]
-    public IActionResult Edit(int id, string name, int validityDays, decimal price)
+    [ValidateAntiForgeryToken]
+    public IActionResult Edit(VignetteType vignette)
     {
-        var vignette = _context.VignetteTypes.Find(id);
-        if (vignette == null) return NotFound();
+        var existing = _context.VignetteTypes.Find(vignette.Id);
+        if (existing == null) return NotFound();
 
-        if (string.IsNullOrWhiteSpace(name))
+        if (!string.IsNullOrWhiteSpace(vignette.Name) &&
+            _context.VignetteTypes.Any(v => v.Name == vignette.Name && v.Id != vignette.Id))
         {
-            ModelState.AddModelError("", "Name is required.");
+            ModelState.AddModelError(nameof(VignetteType.Name), "Vignette name already exists.");
+        }
+
+        if (!ModelState.IsValid)
+        {
             return View(vignette);
         }
 
-        if (_context.VignetteTypes.Any(v => v.Name == name && v.Id != id))
-        {
-            ModelState.AddModelError("", "Vignette name already exists.");
-            return View(vignette);
-        }
-
-        vignette.Name = name;
-        vignette.ValidityDays = validityDays;
-        vignette.Price = price;
-        vignette.UpdatedAt = DateTime.UtcNow;
+        existing.Name = vignette.Name;
+        existing.ValidityDays = vignette.ValidityDays;
+        existing.Price = vignette.Price;
+        existing.UpdatedAt = DateTime.UtcNow;
 
         _context.SaveChanges();
 
@@ -101,6 +95,7 @@ public class AdminVignettesController : Controller
 
     // Delete a vignette type
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public IActionResult Delete(int id)
     {
         var vignette = _context.VignetteTypes.Find(id);

@@ -35,6 +35,7 @@ namespace Carzi.Models
 
         // Distance & fuel
         [Required]
+        [Range(0.01, double.MaxValue, ErrorMessage = "Distance must be greater than 0.")]
         [Column(TypeName = "decimal(10,2)")]
         public decimal DistanceKm { get; set; }
 

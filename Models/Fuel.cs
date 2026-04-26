@@ -30,6 +30,7 @@ namespace Carzi.Models
         public decimal PricePerLiter { get; set; }
 
         [Required]
+        [Range(typeof(decimal), "2", "500", ErrorMessage = "Liters must be at least 2.")]
         [Column(TypeName = "decimal(10,2)")]
         public decimal Liters { get; set; }
 

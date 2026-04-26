@@ -15,6 +15,7 @@ namespace Carzi.Models
 
         // Price per liter in €
         [Required]
+        [Range(typeof(decimal), "0.1", "100", ErrorMessage = "Price must be greater than 0.")]
         [Column(TypeName = "decimal(10,2)")]
         public decimal PricePerLiter { get; set; }
         

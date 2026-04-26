@@ -32,6 +32,9 @@ public class AdminFuelsController : Controller
 
         foreach (var apiFuel in apiFuels)
         {
+            if (apiFuel.Price < 0)
+                continue;
+
             var fuelType = _context.FuelTypes
                 .FirstOrDefault(f => f.Name == apiFuel.Name);
 
@@ -65,26 +68,21 @@ public class AdminFuelsController : Controller
     }
 
     [HttpPost]
-    public IActionResult Create(string name, decimal pricePerLiter)
+    [ValidateAntiForgeryToken]
+    public IActionResult Create(FuelType fuelType)
     {
-        if (string.IsNullOrWhiteSpace(name))
+        if (!string.IsNullOrWhiteSpace(fuelType.Name) &&
+            _context.FuelTypes.Any(f => f.Name == fuelType.Name))
         {
-            ModelState.AddModelError("", "Fuel name is required.");
-            return View();
+            ModelState.AddModelError(nameof(FuelType.Name), "Fuel already exists.");
         }
 
-        if (_context.FuelTypes.Any(f => f.Name == name))
+        if (!ModelState.IsValid)
         {
-            ModelState.AddModelError("", "Fuel already exists.");
-            return View();
+            return View(fuelType);
         }
 
-        var fuelType = new FuelType
-        {
-            Name = name,
-            PricePerLiter = pricePerLiter,
-            UpdatedAt = DateTime.UtcNow
-        };
+        fuelType.UpdatedAt = DateTime.UtcNow;
 
         _context.FuelTypes.Add(fuelType);
         _context.SaveChanges();
@@ -103,26 +101,26 @@ public class AdminFuelsController : Controller
     }
 
     [HttpPost]
-    public IActionResult Edit(int id, string name, decimal pricePerLiter)
+    [ValidateAntiForgeryToken]
+    public IActionResult Edit(FuelType fuelType)
     {
-        var fuelType = _context.FuelTypes.Find(id);
-        if (fuelType == null) return NotFound();
+        var existing = _context.FuelTypes.Find(fuelType.Id);
+        if (existing == null) return NotFound();
 
-        if (string.IsNullOrWhiteSpace(name))
+        if (!string.IsNullOrWhiteSpace(fuelType.Name) &&
+            _context.FuelTypes.Any(f => f.Name == fuelType.Name && f.Id != fuelType.Id))
         {
-            ModelState.AddModelError("", "Fuel name is required.");
+            ModelState.AddModelError(nameof(FuelType.Name), "Fuel name already exists.");
+        }
+
+        if (!ModelState.IsValid)
+        {
             return View(fuelType);
         }
 
-        if (_context.FuelTypes.Any(f => f.Name == name && f.Id != id))
-        {
-            ModelState.AddModelError("", "Fuel name already exists.");
-            return View(fuelType);
-        }
-
-        fuelType.Name = name;
-        fuelType.PricePerLiter = pricePerLiter;
-        fuelType.UpdatedAt = DateTime.UtcNow;
+        existing.Name = fuelType.Name;
+        existing.PricePerLiter = fuelType.PricePerLiter;
+        existing.UpdatedAt = DateTime.UtcNow;
 
         _context.SaveChanges();
 
@@ -132,6 +130,7 @@ public class AdminFuelsController : Controller
 
     // Delete fuels
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public IActionResult Delete(int id)
     {
         var fuelType = _context.FuelTypes.Find(id);

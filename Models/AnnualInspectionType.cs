@@ -13,6 +13,7 @@ namespace Carzi.Models
         public string Name { get; set; } = string.Empty;
 
         [Required]
+        [Range(typeof(decimal), "0.1", "1000", ErrorMessage = "Price must be greater than 0.")]
         [Column(TypeName = "decimal(10,2)")]
         public decimal Price { get; set; }
 
